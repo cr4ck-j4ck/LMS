@@ -2,11 +2,12 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
-import "./auth"; // 👈 Google strategy setup
+import "./auth";
 import dotenv from "dotenv";
 import cors from "cors";
 import axios from "axios";
 import FileStore from "session-file-store";
+
 
 dotenv.config();
 
@@ -69,7 +70,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // If you're using cookies/sessions
+    credentials: true,
   })
 );
 const FileStoreInstance = FileStore(session);
@@ -89,7 +90,6 @@ app.use(passport.session());
 
 // ------------------- ROUTES ------------------- //
 
-// 👇 User clicks this to start Google login
 app.get(
   "/login",
   passport.authenticate("google", {
@@ -104,22 +104,20 @@ app.get(
   })
 );
 
-// 👇 Google redirects here after login
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: `http://localhost:3000/login-failure`,
-    successRedirect: `http://localhost:5173/dashboard`, // ✅ send user here if login is successful
+    successRedirect: `http://localhost:5173/dashboard`,
   })
 );
 
-// 👤 Protected profile route
+
 app.get("/profile", (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/login-failure");
   }
 
-  // 👇 Send user details
   res.send(`
     <h1>Welcome ${req.user?.displayName}</h1>
     <p>Email: ${req.user?.emails}</p>
@@ -127,13 +125,11 @@ app.get("/profile", (req, res) => {
   `);
 });
 
-// ❌ Failed login
 app.get("/login-failure", (req, res) => {
   console.log("issue");
   res.send("Login failed. Try again.");
 });
 
-// 🚪 Logout
 app.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) console.log(err);
@@ -141,7 +137,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// 🏠 Home route
+
 app.get("/disturbed", (req, res) => {
   res.send(`<a href="/log">Login with Google</a>`);
 });
@@ -155,7 +151,6 @@ app.get("/getA", async (req, res) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  // console.log(response.data);
 
   const checkAIContent = async (textToCheck : string ) => {
     const response = await axios.post(
@@ -183,7 +178,6 @@ app.get("/getPandS",(req,res,next)=>{
   res.send(paraAndSentence);
 })
 
-// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
