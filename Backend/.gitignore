@@ -4,3 +4,4 @@ sessions/
 dist/
 build/
 *.log
+Api_Endpoints.txt
