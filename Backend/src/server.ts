@@ -1,4 +1,4 @@
-import pdf from 'pdf-parse';
+import pdf from "pdf-parse";
 import express from "express";
 import session from "express-session";
 import passport from "passport";
@@ -131,12 +131,11 @@ app.get("/disturbed", (req, res) => {
   res.send(`<a href="/log">Login with Google</a>`);
 });
 
-
 app.post("/google-api", async (req, res) => {
   try {
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
-
+    console.log(url);
     if (!accessToken) {
       return res.status(401).send("login karle.. Login nahi hai ");
     }
@@ -150,20 +149,23 @@ app.post("/google-api", async (req, res) => {
     const googleResponse = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-      }
-      ,responseType: 'arraybuffer'
+      },
+      responseType: "arraybuffer",
       // responseType: "stream",
     });
-    console.log("see the Content Type ----",googleResponse.headers['content-type']);
-if(googleResponse.headers['content-type'] == "application/pdf"){
+    console.log(
+      "see the Content Type ----",
+      googleResponse.headers["content-type"]
+    );
+    if (googleResponse.headers["content-type"] == "application/pdf") {
       const buffer = Buffer.from(googleResponse.data);
-    const pdfData = await pdf(buffer);
-    const textContent = pdfData.text;
-    console.log(textContent);
-    res.json(textContent);
-  }else{
-    res.send(googleResponse.data.toString());
-  }
+      const pdfData = await pdf(buffer);
+      const textContent = pdfData.text;
+      console.log(textContent);
+      res.json(textContent);
+    } else {
+      res.send(googleResponse.data.toString());
+    }
   } catch (error) {
     console.error("Google API Error:", error);
     res.status(500).send("Error fetching data from Google API");
@@ -172,29 +174,22 @@ if(googleResponse.headers['content-type'] == "application/pdf"){
 
 app.post("/moodle-api", async (req, res) => {
   try {
-    const accessToken = req.user?.accessToken;
     const { url } = req.body;
-
-    if (!accessToken) {
-      return res.status(401).send("Please Login,.. You are not loginned... ");
-    }
-
     if (!url) {
       return res.status(400).send("URL is required in request body");
     }
+    const properURL = url.replace("TOKEN_HERE", process.env.MOODLE_TOKEN);
+    console.log("Moodle API URL:", properURL);
+    const moodleResponse = await axios.get(properURL);
 
-    console.log("Moodle API URL:", url);
-
-    const moodleResponse = await axios.get(url);
-
-    console.log(moodleResponse.data);
+    // console.log(moodleResponse.data);
     res.json(moodleResponse.data);
   } catch (error) {
     console.error("Moodle API Error:", error);
     res.status(500).send("Error fetching data from Moodle API");
   }
 });
-
+//  https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=MY_TOKEN&wsfunction=core_files_get_files&moodlewsrestformat=json&contextid=104&component=assignsubmission_file&filearea=submission_files&itemid=2
 app.post("/canvas-api", async (req, res) => {
   try {
     // const accessToken = req.user?.accessToken;
@@ -210,17 +205,20 @@ app.post("/canvas-api", async (req, res) => {
 
     console.log("Moodle API URL:", url);
 
-    const moodleResponse = await axios.get(`https://canvas.instructure.com${url}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.CANVAS_TOKEN}`,
-      },
-    });
-
-    console.log(moodleResponse.data);
-    res.json(moodleResponse.data);
+    const canvasResponse = await axios.get(
+      `https://canvas.instructure.com${url}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.CANVAS_TOKEN}`,
+        },
+      }
+    );
+    console.log(canvasResponse.data);
+    console.log(canvasResponse.data);
+    res.json(canvasResponse.data);
   } catch (error) {
     console.error("Moodle API Error:", error);
-    res.status(500).send("Error fetching data from Moodle API");
+    res.status(500).send("Error fetching data from Canvas API");
   }
 });
 
