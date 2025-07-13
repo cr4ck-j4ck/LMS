@@ -8,32 +8,166 @@ import {
   Fab,
   Avatar,
   Tooltip,
-  Button
+  Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MenuIcon from "@mui/icons-material/Menu";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ButtonComponent from "./Button";
+
+interface ButtonConfig {
+  id: string;
+  heading: string;
+  url: string;
+  endpoint: string;
+  inputLabels?: string[];
+  hasLoading: boolean;
+}
+
+const buttonConfigs: ButtonConfig[] = [
+  {
+    id: "assignment",
+    heading: "Get Assignment (Classroom)",
+    url: "https://classroom.googleapis.com/v1/courses",
+    endpoint: "google-api",
+    hasLoading: true,
+  },
+  {
+    id: "courseWork",
+    heading: "Get Course Work (Classroom)",
+    url: "https://classroom.googleapis.com/v1/courses/{input0}/courseWork",
+    endpoint: "google-api",
+    inputLabels: ["Enter Course ID"],
+    hasLoading: true,
+  },
+  {
+    id: "driveData",
+    heading: "Get Drive Data (Classroom)",
+    url: "https://www.googleapis.com/drive/v3/files/{input0}?alt=media",
+    endpoint: "google-api",
+    inputLabels: ["Enter File ID"],
+    hasLoading: false,
+  },
+  {
+    id: "courseStudents",
+    heading: "Get Course Students",
+    url: "https://classroom.googleapis.com/v1/courses/{input0}/students",
+    endpoint: "google-api",
+    inputLabels: ["Enter Course ID for Students"],
+    hasLoading: false,
+  },
+  {
+    id: "teachersList",
+    heading: "Get Teachers List",
+    url: "https://classroom.googleapis.com/v1/courses/{input0}/teachers",
+    endpoint: "google-api",
+    inputLabels: ["Enter Course ID"],
+    hasLoading: false,
+  },
+  {
+    id: "specificStudent",
+    heading: "Get Specific Student",
+    url: "https://classroom.googleapis.com/v1/courses/{input0}/students/{input1}",
+    endpoint: "google-api",
+    inputLabels: ["Enter Course ID", "Enter User ID"],
+    hasLoading: false,
+  },
+  {
+    id: "moodleCourses",
+    heading: "Get Moodle(Courses)",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_course_get_courses&moodlewsrestformat=json",
+    endpoint: "moodle-api",
+    inputLabels: ["Enter Assignment ID"],
+    hasLoading: false,
+  },
+  {
+    id: "moodleSyllabus",
+    heading: "Get Moodle Syllabus",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid={input0}",
+    endpoint: "moodle-api",
+    inputLabels: ["Enter Submission File ID"],
+    hasLoading: false,
+  },
+  {
+    id: "moodleSubmissions",
+    heading: "Get Moodle Assignment Submissions",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=mod_assign_get_submissions&moodlewsrestformat=json&courseid=9&assignmentid={input0}",
+    // url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json",
+    endpoint: "moodle-api",
+    inputLabels: ["Enter Assignment ID"],
+    hasLoading: false,
+  }
+];
 
 const Dashboard: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [assignment, setAssignment] = useState<null | { paragraph: string, sentences: { length: number, score: number, text: string }[] }>(null);
+  const [responses, setResponses] = useState<Record<string, string | null>>({});
+
+  const [inputs, setInputs] = useState<Record<string, string>>({});
+
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
   const navigate = useNavigate();
 
-  const handleGetAssignments = async () => {
-    setLoading(true);
+  const handleServerClick = async (url: string, endPoint: string, setLoadingState: (loading: boolean) => void, buttonId: string) => {
+    setLoadingState(true);
     try {
-      const res = await axios.get("http://localhost:3000/getPandS", {
-        withCredentials: true,
-      });
-      setAssignment(res.data); // expects { paragraph, sentences: [{ length, score, text }] }
+      const res = await axios.post(
+        `http://localhost:3000/${endPoint}`,
+        {
+          url,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(res.data)
+
+      
+      let responseData = "";
+      if (endPoint === "google-api") {
+        // Handle Google API responses
+        if (url.includes("/courses") && !url.includes("/courseWork") && !url.includes("/students") && !url.includes("/teachers")) {
+          responseData = `(${res.data.courses[0].id} & ${res.data.courses[0].name}\n) -- (${res.data.courses[1].id} & ${res.data.courses[1].name}\n)`;
+        } else if (url.includes("/courseWork")) {
+          responseData = `(${res.data.courseWork[0].title} & ${res.data.courseWork[0].description}\n) -- (${res.data.courseWork[0].materials[0].driveFile.driveFile.title} & ${res.data.courseWork[0].materials[0].driveFile.driveFile.id}\n)`;
+        } else {
+          responseData = res.data.id || res.data;
+        }
+      } else if (endPoint === "moodle-api") {
+        
+        responseData = res.data.id || res.data;
+      }
+
+      
+      setResponses(prev => ({ ...prev, [buttonId]: responseData }));
+
     } catch (err) {
       console.error("Failed to fetch assignments", err);
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
+  };
+
+  const updateInput = (buttonId: string, value: string) => {
+    setInputs(prev => ({ ...prev, [buttonId]: value }));
+  };
+
+  const setLoadingState = (buttonId: string, loading: boolean) => {
+    setLoadingStates(prev => ({ ...prev, [buttonId]: loading }));
+  };
+
+  const getDynamicUrl = (config: ButtonConfig): string => {
+    if (config.inputLabels) {
+      let url = config.url;
+      config.inputLabels.forEach((_, index) => {
+        const inputValue = inputs[`${config.id}_${index}`] || "";
+        url = url.replace(`{input${index}}`, inputValue);
+      });
+      return url;
+    }
+    return config.url;
   };
 
   return (
@@ -59,13 +193,15 @@ const Dashboard: React.FC = () => {
               background: "linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)",
               boxShadow: 3,
               transition: "transform 0.2s, box-shadow 0.2s, background 0.2s",
-              ':hover': {
-                transform: 'scale(1.08)',
+              ":hover": {
+                transform: "scale(1.08)",
                 boxShadow: 8,
-                background: "linear-gradient(90deg, #38f9d7 0%, #43e97b 100%)"
-              }
+                background: "linear-gradient(90deg, #38f9d7 0%, #43e97b 100%)",
+              },
             }}
-            onClick={() => {navigate("/login")}}
+            onClick={() => {
+              navigate("/login");
+            }}
           >
             Login
           </Button>
@@ -77,93 +213,40 @@ const Dashboard: React.FC = () => {
         </Toolbar>
       </AppBar>
       <Box sx={{ p: 4 }}>
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="large"
-            startIcon={<AssignmentIcon />}
-            onClick={handleGetAssignments}
-            sx={{
-              borderRadius: 8,
-              fontWeight: 700,
-              px: 4,
-              py: 1.5,
-              boxShadow: 4,
-              textTransform: "none",
-              fontSize: 20,
-              background: "linear-gradient(90deg, #7b1fa2 0%, #512da8 100%)",
-              ':hover': { background: "linear-gradient(90deg, #512da8 0%, #7b1fa2 100%)" }
-            }}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Get Assignments"}
-          </Button>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          {buttonConfigs.map((config) => (
+            <ButtonComponent
+              key={config.id}
+              heading={config.heading}
+              response={responses[config.id] || null}
+              url={getDynamicUrl(config)}
+              endpoint={config.endpoint}
+              buttonId={config.id}
+              inputFields={config.inputLabels?.map((label, index) => ({
+                label,
+                value: inputs[`${config.id}_${index}`] || "",
+                onChange: (value: string) => updateInput(`${config.id}_${index}`, value)
+              }))}
+              onServerClick={handleServerClick}
+              setLoadingState={(loading) => setLoadingState(config.id, loading)}
+              loading={loadingStates[config.id] || false}
+            />
+          ))}
         </Box>
-        {assignment && (
-          <Box sx={{
-            mt: 4,
-            p: 3,
-            borderRadius: 4,
-            background: '#fff',
-            boxShadow: 2,
-            maxWidth: 800,
-            mx: 'auto',
-          }}>
-            <style>{`
-              .sentence-animate {
-                position: relative;
-                display: inline-block;
-                border-radius: 6px;
-                padding: 2px 8px;
-                margin: 0 4px 8px 0;
-                font-weight: 500;
-                color: #fff;
-                overflow: hidden;
-              }
-              .sentence-animate::before {
-                content: '';
-                position: absolute;
-                left: 0; top: 0; bottom: 0;
-                width: 0%;
-                background: var(--score-color, #d32f2f);
-                z-index: 0;
-                border-radius: 6px;
-                animation: redSweep 1s forwards;
-              }
-              .sentence-animate .sentence-text {
-                position: relative;
-                z-index: 1;
-              }
-              @keyframes redSweep {
-                from { width: 0%; }
-                to { width: 100%; }
-              }
-            `}</style>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Assignment Analysis</Typography>
-            <Box>
-              {assignment.sentences.map((s, i) => {
-                let color = '#d32f2f';
-                if (s.score >= 80) color = '#2e7d32'; // deep green
-                else if (s.score >= 60) color = '#388e3c'; // green
-                else if (s.score >= 40) color = '#fbc02d'; // yellow
-                else if (s.score >= 20) color = '#f57c00'; // orange
-                // else stays red
-                return (
-                  <span
-                    key={i}
-                    className="sentence-animate"
-                    style={{ animationDelay: `${i * 0.1}s`, '--score-color': color } as React.CSSProperties}
-                    title={`Score: ${s.score.toFixed(2)}`}
-                  >
-                    <span className="sentence-text">{s.text}</span>
-                  </span>
-                );
-              })}
-            </Box>
-          </Box>
-        )}
-        <Fab color="primary" aria-label="add" sx={{ position: "fixed", bottom: 32, right: 32, boxShadow: 6 }}>
+
+        <Fab
+          color="primary"
+          aria-label="add"
+          sx={{ position: "fixed", bottom: 32, right: 32, boxShadow: 6 }}
+        >
           <AddIcon />
         </Fab>
       </Box>

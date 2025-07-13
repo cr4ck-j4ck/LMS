@@ -9,7 +9,6 @@ const Login: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    // Placeholder for Google login logic
     console.log("Login with Google clicked");
   };
 
