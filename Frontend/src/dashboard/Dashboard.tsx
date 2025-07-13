@@ -77,15 +77,14 @@ const buttonConfigs: ButtonConfig[] = [
   {
     id: "moodleCourses",
     heading: "Get Moodle(Courses)",
-    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_course_get_courses&moodlewsrestformat=json",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_courses&moodlewsrestformat=json",
     endpoint: "moodle-api",
-    inputLabels: ["Enter Assignment ID"],
     hasLoading: false,
   },
   {
     id: "moodleSyllabus",
     heading: "Get Moodle Syllabus",
-    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid={input0}",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid={input0}",
     endpoint: "moodle-api",
     inputLabels: ["Enter Submission File ID"],
     hasLoading: false,
@@ -93,10 +92,20 @@ const buttonConfigs: ButtonConfig[] = [
   {
     id: "moodleSubmissions",
     heading: "Get Moodle Assignment Submissions",
-    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=mod_assign_get_submissions&moodlewsrestformat=json&courseid=9&assignmentid={input0}",
-    // url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=${process.env.MOODLE_TOKEN}&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_submissions&moodlewsrestformat=json&assignmentids[0]={input0}",
+    // url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json",
     endpoint: "moodle-api",
     inputLabels: ["Enter Assignment ID"],
+    hasLoading: false,
+  },
+  {
+    id: "moodleSubmissionAttachment",
+    heading: "Get Moodle Assignment Submission Content",
+    // url: "{input0}?token=TOKEN_HERE",
+    // url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json",
+    url: "https://cr4ck-j4ck.moodlecloud.com/webservice/pluginfile.php/104/assignsubmission_file/submission_files/2/isPalindrome.txt?token=YOUR_TOKEN&wstoken=TOKEN_HERE",
+    endpoint: "moodle-api",
+    inputLabels: ["Enter File URL"],
     hasLoading: false,
   },
   {
@@ -129,6 +138,14 @@ const buttonConfigs: ButtonConfig[] = [
     endpoint: "canvas-api",
     inputLabels: ["Enter Course ID"],
     hasLoading: true,
+  },
+  {
+    id: "canvasGetSubmissions",
+    heading: "Get Submissions Of students",
+    url: "/api/v1/courses/{input0}/assignments/{input1}/submissions",
+    endpoint: "canvas-api",
+    inputLabels: ["Enter Course ID","Enter assignment ID"],
+    hasLoading: true,
   }
 ];
 
@@ -144,7 +161,7 @@ const Dashboard: React.FC = () => {
   const handleServerClick = async (url: string, endPoint: string, setLoadingState: (loading: boolean) => void, buttonId: string) => {
     setLoadingState(true);
     try {
-      console.log(`http://localhost:3000/${endPoint}`);
+      console.log(url);
       const res = await axios.post(
         `http://localhost:3000/${endPoint}`,
         {
