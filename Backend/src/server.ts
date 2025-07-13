@@ -185,9 +185,34 @@ app.post("/moodle-api", async (req, res) => {
 
     console.log("Moodle API URL:", url);
 
-    const moodleResponse = await axios.get(url, {
+    const moodleResponse = await axios.get(url);
+
+    console.log(moodleResponse.data);
+    res.json(moodleResponse.data);
+  } catch (error) {
+    console.error("Moodle API Error:", error);
+    res.status(500).send("Error fetching data from Moodle API");
+  }
+});
+
+app.post("/canvas-api", async (req, res) => {
+  try {
+    // const accessToken = req.user?.accessToken;
+    const { url } = req.body;
+
+    // if (!accessToken) {
+    //   return res.status(401).send("Please Login,.. You are not loginned... ");
+    // }
+
+    if (!url) {
+      return res.status(400).send("URL is required in request body");
+    }
+
+    console.log("Moodle API URL:", url);
+
+    const moodleResponse = await axios.get(`https://canvas.instructure.com${url}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.CANVAS_TOKEN}`,
       },
     });
 

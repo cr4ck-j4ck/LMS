@@ -98,6 +98,37 @@ const buttonConfigs: ButtonConfig[] = [
     endpoint: "moodle-api",
     inputLabels: ["Enter Assignment ID"],
     hasLoading: false,
+  },
+  {
+    id: "canvasCourses",
+    heading: "Fetch all Canvas Courses",
+    url: "/api/v1/courses",
+    endpoint: "canvas-api",
+    hasLoading: true,
+  },
+  {
+    id: "canvasEnrollments",
+    heading: "List enrollments in the courses",
+    url: "/api/v1/courses/{input0}/enrollments",
+    endpoint: "canvas-api",
+    inputLabels: ["Enter Course ID"],
+    hasLoading: true,
+  },
+  {
+    id: "canvasSpecificStudent",
+    heading: "Get User Specific Info",
+    url: "/api/v1/users/{input0}/profile",
+    endpoint: "canvas-api",
+    inputLabels: ["Enter User ID"],
+    hasLoading: true,
+  },
+  {
+    id: "canvasCourseAssignments",
+    heading: "Get Course Assignments",
+    url: "/api/v1/courses/{input0}/assignments",
+    endpoint: "canvas-api",
+    inputLabels: ["Enter Course ID"],
+    hasLoading: true,
   }
 ];
 
@@ -113,6 +144,7 @@ const Dashboard: React.FC = () => {
   const handleServerClick = async (url: string, endPoint: string, setLoadingState: (loading: boolean) => void, buttonId: string) => {
     setLoadingState(true);
     try {
+      console.log(`http://localhost:3000/${endPoint}`);
       const res = await axios.post(
         `http://localhost:3000/${endPoint}`,
         {
