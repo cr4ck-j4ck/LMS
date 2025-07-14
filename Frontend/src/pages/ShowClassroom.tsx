@@ -14,13 +14,14 @@ interface Syllabus {
   alternateLink: string;
   maxPoints?: number;
   state?: string;
+  id?: string;
 }
 
 const ShowClassroom: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [syllabus, setSyllabus] = useState<Syllabus | null>(null);
+  const [syllabus, setSyllabus] = useState<Syllabus[]>([]);
   const [syllabusLoading, setSyllabusLoading] = useState(false);
   const [syllabusError, setSyllabusError] = useState<string | null>(null);
 
@@ -47,7 +48,7 @@ const ShowClassroom: React.FC = () => {
   }, []);
 
   const fetchSyllabus = async (courseId: string) => {
-    setSyllabus(null);
+    setSyllabus([]);
     setSyllabusError(null);
     setSyllabusLoading(true);
     try {
@@ -58,14 +59,17 @@ const ShowClassroom: React.FC = () => {
         body: JSON.stringify({ url: `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork` })
       });
       const data = await res.json();
+      console.log(data);
       if (data.courseWork && data.courseWork.length > 0) {
-        setSyllabus({
-          title: data.courseWork[0].title,
-          description: data.courseWork[0].description,
-          alternateLink: data.courseWork[0].alternateLink,
-          maxPoints: data.courseWork[0].maxPoints,
-          state: data.courseWork[0].state
-        });
+        const syllabusData = data.courseWork.map((work: Syllabus) => ({
+          title: work.title,
+          description: work.description,
+          alternateLink: work.alternateLink,
+          maxPoints: work.maxPoints,
+          state: work.state,
+          id: work.id
+        }));
+        setSyllabus(syllabusData);
       } else {
         setSyllabusError("No syllabus found for this course.");
       }
@@ -115,20 +119,24 @@ const ShowClassroom: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="max-w-3xl mx-auto mt-16 p-8 bg-white/80 rounded-2xl shadow-lg border border-blue-100">
+      <div className="max-w-4xl mx-auto mt-16 p-8 bg-white/80 rounded-2xl shadow-lg border border-blue-100">
         <h2 className="text-2xl font-bold text-blue-700 mb-4">All Fetched Syllabus</h2>
         {syllabusLoading && <div className="text-blue-500 font-semibold">Loading syllabus...</div>}
         {syllabusError && <div className="text-red-500 font-semibold">{syllabusError}</div>}
-        {syllabus && (
-          <div className="animate-fade-in">
-            <h3 className="text-xl font-bold text-blue-800 mb-2">{syllabus.title}</h3>
-            <p className="text-gray-700 mb-2 whitespace-pre-line">{syllabus.description}</p>
-            <a href={syllabus.alternateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-medium">View in Classroom</a>
-            {syllabus.maxPoints !== undefined && <div className="mt-2 text-sm text-gray-500">Max Points: {syllabus.maxPoints}</div>}
-            {syllabus.state && <div className="mt-1 text-xs text-gray-400">State: {syllabus.state}</div>}
+        {syllabus.length > 0 && (
+          <div className="space-y-6">
+            {syllabus.map((item, idx) => (
+              <div key={item.id || idx} className="animate-fade-in border border-blue-200 rounded-xl p-6 bg-white/50">
+                <h3 className="text-xl font-bold text-blue-800 mb-2">{item.title}</h3>
+                <p className="text-gray-700 mb-2 whitespace-pre-line">{item.description}</p>
+                <a href={item.alternateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-medium">View in Classroom</a>
+                {item.maxPoints !== undefined && <div className="mt-2 text-sm text-gray-500">Max Points: {item.maxPoints}</div>}
+                {item.state && <div className="mt-1 text-xs text-gray-400">State: {item.state}</div>}
+              </div>
+            ))}
           </div>
         )}
-        {!syllabus && !syllabusLoading && !syllabusError && <div className="text-gray-400">No syllabus fetched yet.</div>}
+        {!syllabus.length && !syllabusLoading && !syllabusError && <div className="text-gray-400">No syllabus fetched yet.</div>}
       </div>
       <style>{`
         .animate-fade-in {
