@@ -51,6 +51,14 @@ const buttonConfigs: ButtonConfig[] = [
     hasLoading: false,
   },
   {
+    id: "classroomSubmissions",
+    heading: "Get Submission of A Course",
+    url: "https://classroom.googleapis.com/v1/courses/{input0}/courseWork/{input1}/studentSubmissions",
+    endpoint: "google-api",
+    inputLabels: ["Enter Course Id", "Enter Course Work ID"],
+    hasLoading: false,
+  },
+  {
     id: "courseStudents",
     heading: "Get Course Students",
     url: "https://classroom.googleapis.com/v1/courses/{input0}/students",
