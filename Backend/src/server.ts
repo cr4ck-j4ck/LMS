@@ -123,7 +123,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: `http://localhost:3000/login-failure`,
-    successRedirect: `http://localhost:5173/dashboard`,
+    successRedirect: `http://localhost:5173/showLMS`,
   })
 );
 
@@ -144,13 +144,13 @@ app.get("/disturbed", (req, res) => {
 });
 
 app.post("/google-api", async (req, res) => {
-  console.log("IP dekh -",req.ip);
   try {
+    console.log(req.sessionID);
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
     console.log(url);
     if (!accessToken) {
-      return res.status(401).send("login karle.. Login nahi hai ");
+      return res.send("You are not Logged In..");
     }
 
     if (!url) {
@@ -244,9 +244,9 @@ app.post("/plagiarismCheck", async (req, res, next) => {
       const pdfData = await pdf(buffer);
       const textContent = pdfData.text;
       console.log(textContent);
-      const plagiarismData = await plagiarismChecker("Web 3.0 has the potential to be just as disruptive and to usher in a significant paradigm shift as Web 2.0 did. The fundamental ideas of decentralization, openness and increased consumer usefulness form the foundation of Web 3.0. Web 3.0, often known as Web 3, is the next step in the development of the internet.")
-      console.log(plagiarismData);
-      res.json(plagiarismData);
+      // const plagiarismData = await plagiarismChecker("Web 3.0 has the potential to be just as disruptive and to usher in a significant paradigm shift as Web 2.0 did. The fundamental ideas of decentralization, openness and increased consumer usefulness form the foundation of Web 3.0. Web 3.0, often known as Web 3, is the next step in the development of the internet.")
+      // console.log(plagiarismData);
+      res.json(textContent);
     } else {
       res.send(googleResponse.data);
     }
