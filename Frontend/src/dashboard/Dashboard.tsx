@@ -152,7 +152,7 @@ const buttonConfigs: ButtonConfig[] = [
     heading: "Get Submissions Of students",
     url: "/api/v1/courses/{input0}/assignments/{input1}/submissions",
     endpoint: "canvas-api",
-    inputLabels: ["Enter Course ID","Enter assignment ID"],
+    inputLabels: ["Enter Course ID", "Enter assignment ID"],
     hasLoading: true,
   }
 ];
@@ -179,9 +179,9 @@ const Dashboard: React.FC = () => {
           withCredentials: true,
         }
       );
-      console.log(res.data)
-
       
+      console.log(res);
+
       let responseData = "";
       if (endPoint === "google-api") {
         // Handle Google API responses
@@ -193,11 +193,11 @@ const Dashboard: React.FC = () => {
           responseData = res.data.id || res.data;
         }
       } else if (endPoint === "moodle-api") {
-        
+
         responseData = res.data.id || res.data;
       }
 
-      
+
       setResponses(prev => ({ ...prev, [buttonId]: responseData }));
 
     } catch (err) {

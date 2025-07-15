@@ -5,7 +5,7 @@ import MainPage from "../pages/MainPage";
 import ShowClassroom from '../pages/ShowClassroom';
 import Moodle from '../pages/Moodle';
 import Canvas from '../pages/Canvas';
-
+import ReportsPage from '../pages/ReportsPage';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -16,6 +16,7 @@ const AppRoutes = () => {
             <Route path="/showClassroom" element={<ShowClassroom />} />
             <Route path="/moodle" element={<Moodle />} />
             <Route path="/canvas" element={<Canvas />} />
+            <Route path="/ReportsPage" element={<ReportsPage/>} />
         </Routes>
     )
 };
