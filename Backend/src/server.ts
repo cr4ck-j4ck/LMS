@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import axios from "axios";
 import FileStore from "session-file-store";
+import { AxiosError } from "axios";
 
 dotenv.config();
 
@@ -91,6 +92,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+async function plagiarismChecker(text:string):Promise<string>{
+  const response = await axios.post("https://api.gowinston.ai/v2/plagiarism",{text},{
+    headers:{
+      Authorization: `Bearer ${process.env.WINGSTON_API}`,
+      "Content-Type":"application/json"
+    },
+    
+  });
+  return response.data;
+}
+
 // ------------------- ROUTES ------------------- //
 
 app.get(
@@ -132,6 +144,7 @@ app.get("/disturbed", (req, res) => {
 });
 
 app.post("/google-api", async (req, res) => {
+  console.log("IP dekh -",req.ip);
   try {
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
@@ -153,21 +166,11 @@ app.post("/google-api", async (req, res) => {
       responseType: "arraybuffer",
       // responseType: "stream",
     });
-    console.log(
-      "see the Content Type ----",
-      googleResponse.headers["content-type"]
-    );
-    if (googleResponse.headers["content-type"] == "application/pdf") {
-      const buffer = Buffer.from(googleResponse.data);
-      const pdfData = await pdf(buffer);
-      const textContent = pdfData.text;
-      console.log(textContent);
-      res.json(textContent);
-    } else {
-      res.send(googleResponse.data.toString());
+    res.send(googleResponse.data);
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data.toString() || error.message);
     }
-  } catch (error) {
-    console.error("Google API Error:", error);
     res.status(500).send("Error fetching data from Google API");
   }
 });
@@ -222,11 +225,57 @@ app.post("/canvas-api", async (req, res) => {
   }
 });
 
-app.get("/getPandS", (req, res, next) => {
-  console.log("hii got p&s");
-  res.send(paraAndSentence);
+app.post("/plagiarismCheck", async (req, res, next) => {
+  if (!req.user?.accessToken) {
+    console.log("hai hi nahi access Token toh");
+    return res.send("You are not allowed because you are not loggedin");
+  }
+
+  try {
+    const googleResponse = await axios.get(req.body.url, {
+      headers: {
+        Authorization: `Bearer ${req.user?.accessToken}`,
+      },
+      responseType: "arraybuffer",
+    });
+    console.log(googleResponse.headers["content-type"]);
+    if (googleResponse.headers["content-type"] == "application/pdf") {
+      const buffer = Buffer.from(googleResponse.data);
+      const pdfData = await pdf(buffer);
+      const textContent = pdfData.text;
+      console.log(textContent);
+      const plagiarismData = await plagiarismChecker("Web 3.0 has the potential to be just as disruptive and to usher in a significant paradigm shift as Web 2.0 did. The fundamental ideas of decentralization, openness and increased consumer usefulness form the foundation of Web 3.0. Web 3.0, often known as Web 3, is the next step in the development of the internet.")
+      console.log(plagiarismData);
+      res.json(plagiarismData);
+    } else {
+      res.send(googleResponse.data);
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data.toString());
+      res.send("Error Occurred While Fetching , Error From (Backend)"); 
+    } else {
+      console.log(error);
+      res.send("Error Occurred While Fetching...");
+    }
+  }
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+  // useEffect(() => {
+  //   const unMountReport = (e:MouseEvent) => {
+  //     console.log(modalReport);
+  //     console.log(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node));
+  //     if(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node) && !viewEl.current?.contains(e.target as Node)){
+  //       setModalReport(null);
+  //     }else{
+  //       console.log("Ha Bhai ");
+  //     }
+  //   };
+  //   window.addEventListener("click", unMountReport);
+  //   return () => window.removeEventListener("click", unMountReport);
+  // }, [reportEle,modalReport]);
+  //   const reportEle = useRef<HTMLDivElement | null>(null);
+  // const viewEl = useRef<HTMLDivElement | null>(null);
