@@ -18,7 +18,8 @@ const allowedOrigins = ["http://localhost:5173"];
 
 declare module "express-session" {
   interface SessionData {
-    accessToken?: string;
+    moodleAccessToken?: string;
+    moodleInstituteName?: string;
   }
 }
 
@@ -92,14 +93,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-async function plagiarismChecker(text:string):Promise<string>{
-  const response = await axios.post("https://api.gowinston.ai/v2/plagiarism",{text},{
-    headers:{
-      Authorization: `Bearer ${process.env.WINGSTON_API}`,
-      "Content-Type":"application/json"
-    },
-    
-  });
+async function plagiarismChecker(text: string): Promise<string> {
+  const response = await axios.post(
+    "https://api.gowinston.ai/v2/plagiarism",
+    { text },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.WINGSTON_API}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 }
 
@@ -175,7 +179,19 @@ app.post("/google-api", async (req, res) => {
   }
 });
 
+app.post("/moodle-login", async (req, res) => {
+  console.log("Request aa rahi hai ",req.sessionID);
+  req.session.moodleInstituteName = req.body.institute;
+  req.session.moodleAccessToken = req.body.authToken;
+  console.log("req.user", req.session.moodleAccessToken);
+  res.send("ha Bhai cheetey");
+});
+
 app.post("/moodle-api", async (req, res) => {
+  console.log("yaha moodleAPI per aayi hai",req.session.moodleAccessToken);
+  if (!req.session.moodleAccessToken) {
+    return res.send("Please Login into Moodle First..");
+  }
   try {
     const { url } = req.body;
     if (!url) {
@@ -253,7 +269,7 @@ app.post("/plagiarismCheck", async (req, res, next) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data.toString());
-      res.send("Error Occurred While Fetching , Error From (Backend)"); 
+      res.send("Error Occurred While Fetching , Error From (Backend)");
     } else {
       console.log(error);
       res.send("Error Occurred While Fetching...");
@@ -264,18 +280,18 @@ app.post("/plagiarismCheck", async (req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-  // useEffect(() => {
-  //   const unMountReport = (e:MouseEvent) => {
-  //     console.log(modalReport);
-  //     console.log(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node));
-  //     if(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node) && !viewEl.current?.contains(e.target as Node)){
-  //       setModalReport(null);
-  //     }else{
-  //       console.log("Ha Bhai ");
-  //     }
-  //   };
-  //   window.addEventListener("click", unMountReport);
-  //   return () => window.removeEventListener("click", unMountReport);
-  // }, [reportEle,modalReport]);
-  //   const reportEle = useRef<HTMLDivElement | null>(null);
-  // const viewEl = useRef<HTMLDivElement | null>(null);
+// useEffect(() => {
+//   const unMountReport = (e:MouseEvent) => {
+//     console.log(modalReport);
+//     console.log(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node));
+//     if(modalReport && reportEle.current && !reportEle.current?.contains(e.target as Node) && !viewEl.current?.contains(e.target as Node)){
+//       setModalReport(null);
+//     }else{
+//       console.log("Ha Bhai ");
+//     }
+//   };
+//   window.addEventListener("click", unMountReport);
+//   return () => window.removeEventListener("click", unMountReport);
+// }, [reportEle,modalReport]);
+//   const reportEle = useRef<HTMLDivElement | null>(null);
+// const viewEl = useRef<HTMLDivElement | null>(null);

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-
+import axios from "axios";
+import { FaBookOpen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 interface MoodleCourse {
   id: number;
   fullname: string;
@@ -13,22 +15,24 @@ const Moodle: React.FC = () => {
   const [courses, setCourses] = useState<MoodleCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("http://localhost:3000/moodle-api", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.post(
+          "http://localhost:3000/moodle-api",
+          {
             url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_courses&moodlewsrestformat=json"
-          })
-        });
-        const data = await res.json();
-        setCourses(data || []);
+          },
+          { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        );
+        if (res.data === "Please Login into Moodle First..") {
+          navigate("/moodleAboard");
+        } else {
+          setCourses(res.data || []);
+        }
       } catch {
         setError("Failed to fetch Moodle courses");
       } finally {
@@ -39,8 +43,24 @@ const Moodle: React.FC = () => {
   }, []);
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-[40vh]">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+    <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 animate-fade-in">
+      <div className="relative flex flex-col items-center">
+        <span className="animate-bounce-slow">
+          <FaBookOpen className="text-7xl text-green-500 drop-shadow-lg" />
+        </span>
+        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 animate-glow">Loading Moodle Courses...</span>
+        <div className="mt-4 w-32 h-2 rounded-full bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 animate-pulse-glow" />
+      </div>
+      <style>{`
+        .animate-bounce-slow { animation: bounce 2s infinite alternate; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-24px); } }
+        .animate-glow { animation: glow 1.5s ease-in-out infinite alternate; }
+        @keyframes glow { 0% { text-shadow: 0 0 8px #a7f3d0, 0 0 16px #38bdf8; } 100% { text-shadow: 0 0 24px #a7f3d0, 0 0 32px #38bdf8; } }
+        .animate-pulse-glow { animation: pulseGlow 1.2s infinite alternate; }
+        @keyframes pulseGlow { 0% { opacity: 0.7; } 100% { opacity: 1; box-shadow: 0 0 24px #a7f3d0, 0 0 32px #38bdf8; } }
+        .animate-fade-in { animation: fadeInUp 1s both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: none; } }
+      `}</style>
     </div>
   );
   if (error) return <div className="text-center text-red-600 font-semibold mt-8">{error}</div>;

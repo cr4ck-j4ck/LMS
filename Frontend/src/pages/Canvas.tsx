@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { FaLayerGroup } from "react-icons/fa";
 
 interface CanvasCourse {
   id: number;
@@ -20,16 +22,14 @@ const Canvas: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("http://localhost:3000/canvas-api", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.post(
+          "http://localhost:3000/canvas-api",
+          {
             url: "/api/v1/courses"
-          })
-        });
-        const data = await res.json();
-        setCourses(data || []);
+          },
+          { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        );
+        setCourses(res.data || []);
       } catch {
         setError("Failed to fetch Canvas courses");
       } finally {
@@ -40,8 +40,24 @@ const Canvas: React.FC = () => {
   }, []);
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-[40vh]">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+    <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 animate-fade-in">
+      <div className="relative flex flex-col items-center">
+        <span className="animate-bounce-slow">
+          <FaLayerGroup className="text-7xl text-purple-500 drop-shadow-lg" />
+        </span>
+        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-blue-600 to-pink-500 animate-glow">Loading Canvas Courses...</span>
+        <div className="mt-4 w-32 h-2 rounded-full bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 animate-pulse-glow" />
+      </div>
+      <style>{`
+        .animate-bounce-slow { animation: bounce 2s infinite alternate; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-24px); } }
+        .animate-glow { animation: glow 1.5s ease-in-out infinite alternate; }
+        @keyframes glow { 0% { text-shadow: 0 0 8px #c4b5fd, 0 0 16px #f472b6; } 100% { text-shadow: 0 0 24px #c4b5fd, 0 0 32px #f472b6; } }
+        .animate-pulse-glow { animation: pulseGlow 1.2s infinite alternate; }
+        @keyframes pulseGlow { 0% { opacity: 0.7; } 100% { opacity: 1; box-shadow: 0 0 24px #c4b5fd, 0 0 32px #f472b6; } }
+        .animate-fade-in { animation: fadeInUp 1s both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: none; } }
+      `}</style>
     </div>
   );
   if (error) return <div className="text-center text-red-600 font-semibold mt-8">{error}</div>;

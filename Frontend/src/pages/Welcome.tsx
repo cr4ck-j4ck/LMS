@@ -12,7 +12,7 @@ const Welcome: React.FC = () => {
       <div className="relative z-10 flex flex-col items-center text-center px-6 py-16">
         <div className="flex items-center gap-4 mb-6 animate-fade-in">
           <FaRocket className="text-6xl text-pink-500 animate-bounce" />
-          <h1 className="text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 drop-shadow-xl animate-fade-in">Welcome to LMS Portal!</h1>
+          <h1 className="text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 drop-shadow-xl animate-fade-in">Welcome to HonestIQ!</h1>
           <FaSmileBeam className="text-6xl text-yellow-400 animate-wiggle" />
         </div>
         <p className="text-2xl text-gray-700 font-medium mb-10 animate-fade-in" style={{animationDelay: '0.2s'}}>Your one-stop platform for <span className="text-blue-600 font-bold">learning</span>, <span className="text-purple-600 font-bold">collaboration</span>, and <span className="text-pink-600 font-bold">success</span>.</p>
@@ -34,7 +34,7 @@ const Welcome: React.FC = () => {
           </div>
         </div>
         
-        <Link to="/" className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white text-2xl font-bold rounded-full shadow-lg hover:scale-110 transition-transform duration-300 animate-fade-in" style={{animationDelay: '0.6s'}}>
+        <Link to="/showLMS" className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white text-2xl font-bold rounded-full shadow-lg hover:scale-110 transition-transform duration-300 animate-fade-in" style={{animationDelay: '0.6s'}}>
           <FaMagic className="text-3xl animate-spin-slow" />
           Explore LMS
         </Link>

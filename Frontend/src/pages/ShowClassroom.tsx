@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ShowSubmissionsButton from "../Components/ShowSubmissions";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaChalkboardTeacher } from "react-icons/fa";
 interface DriveFile {
   driveFile: {
     alternateLink: string;
@@ -41,20 +43,22 @@ const ShowClassroom: React.FC = () => {
   const [syllabus, setSyllabus] = useState<CourseWork[]>([]);
   const [syllabusLoading, setSyllabusLoading] = useState(false);
   const [syllabusError, setSyllabusError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("http://localhost:3000/google-api", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: "https://classroom.googleapis.com/v1/courses" })
-        });
-        const data = await res.json();
-        setCourses(data.courses || []);
+        const res = await axios.post(
+          "http://localhost:3000/google-api",
+          { url: "https://classroom.googleapis.com/v1/courses" },
+          { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        );
+        if(res.data !== "You are not Logged In.."){
+          setCourses(res.data.courses || []);
+        }else{
+          navigate("/login");
+        }
       } catch {
         setError("Failed to fetch courses");
       } finally {
@@ -69,14 +73,13 @@ const ShowClassroom: React.FC = () => {
     setSyllabusError(null);
     setSyllabusLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/google-api", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork` })
-      });
-      const data = await res.json();
-      console.log("data",data);
+      const res = await axios.post(
+        "http://localhost:3000/google-api",
+        { url: `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork` },
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      );
+      const data = res.data;
+      console.log("data", data);
       if (data.courseWork && data.courseWork.length > 0) {
         const syllabusData: CourseWork[] = data.courseWork.map((work: CourseWork) => ({
           title: work.title,
@@ -85,7 +88,7 @@ const ShowClassroom: React.FC = () => {
           maxPoints: work.maxPoints,
           state: work.state,
           id: work.id,
-          courseId:work.courseId,
+          courseId: work.courseId,
           materials: work.materials || []
         }));
         setSyllabus(syllabusData);
@@ -100,8 +103,24 @@ const ShowClassroom: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-[40vh]">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+    <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 animate-fade-in">
+      <div className="relative flex flex-col items-center">
+        <span className="animate-bounce-slow">
+          <FaChalkboardTeacher className="text-7xl text-blue-500 drop-shadow-lg" />
+        </span>
+        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 animate-glow">Loading Classroom Courses...</span>
+        <div className="mt-4 w-32 h-2 rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-pulse-glow" />
+      </div>
+      <style>{`
+        .animate-bounce-slow { animation: bounce 2s infinite alternate; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-24px); } }
+        .animate-glow { animation: glow 1.5s ease-in-out infinite alternate; }
+        @keyframes glow { 0% { text-shadow: 0 0 8px #a5b4fc, 0 0 16px #f472b6; } 100% { text-shadow: 0 0 24px #a5b4fc, 0 0 32px #f472b6; } }
+        .animate-pulse-glow { animation: pulseGlow 1.2s infinite alternate; }
+        @keyframes pulseGlow { 0% { opacity: 0.7; } 100% { opacity: 1; box-shadow: 0 0 24px #a5b4fc, 0 0 32px #f472b6; } }
+        .animate-fade-in { animation: fadeInUp 1s both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: none; } }
+      `}</style>
     </div>
   );
   if (error) return <div className="text-center text-red-600 font-semibold mt-8">{error}</div>;

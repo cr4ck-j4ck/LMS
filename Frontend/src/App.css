@@ -1,5 +1,6 @@
 .main{
   width: 100vw;
+  height: 100vh;
 }
 .la{
   color: black;
@@ -8,4 +9,8 @@
   background-color: white;
   color: black;
   border: 2px grey solid;
+}
+.navbar{
+  position: sticky;
+  top: 0;
 }
