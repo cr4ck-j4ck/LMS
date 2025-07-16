@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import PlagiarismButton from "./PlagiarismButton";
 
 interface MoodleFile {
   filename: string;
@@ -37,6 +38,13 @@ interface MoodleAssignment {
   submissions: MoodleSubmission[];
 }
 
+interface MoodleEditorField {
+  name: string;
+  description: string;
+  text: string;
+  format: number;
+}
+
 const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance }) => {
   const [loading, setLoading] = React.useState(false);
   const [submissions, setSubmissions] = React.useState<MoodleSubmission[] | null>(null);
@@ -48,17 +56,14 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
     setError(null);
     setSubmissions(null);
     try {
-      console.log("Yeh dekh Assignment ID", instance);
       const res = await axios.post("http://localhost:3000/moodle-api", {
         url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_submissions&moodlewsrestformat=json&assignmentids[0]=${instance}`
       }, { withCredentials: true });
 
       // The response structure: { assignments: [{ id, submissions: [...] }] }
-      console.log(res.data);
       const assignments: MoodleAssignment[] = res.data.assignments || [];
       const found = assignments.find((a) => String(a.assignmentid) === String(instance));
-      console.log("assignments",assignments)
-      console.log("found",found)
+      console.log(found);
       setSubmissions(found?.submissions || []);
     } catch {
       setError("Failed to fetch submissions.");
@@ -98,11 +103,21 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
           {submittedSubmissions.map((sub) => {
             // Find file plugin and files
             let files: MoodleFile[] = [];
-            const filePlugin = sub.plugins?.find((p) => p.type === 'file');
-            if (filePlugin && filePlugin.fileareas) {
-              const submissionArea = filePlugin.fileareas.find((fa) => fa.area === 'submission_files');
-              if (submissionArea && submissionArea.files) {
-                files = submissionArea.files;
+            let onlineText: string | null = null;
+            if (sub.plugins) {
+              const filePlugin = sub.plugins.find((p) => p.type === 'file');
+              if (filePlugin && filePlugin.fileareas) {
+                const submissionArea = filePlugin.fileareas.find((fa) => fa.area === 'submission_files');
+                if (submissionArea && submissionArea.files) {
+                  files = submissionArea.files;
+                }
+              }
+              const onlineTextPlugin = sub.plugins.find((p) => p.type === 'onlinetext');
+              if (onlineTextPlugin && (onlineTextPlugin as { editorfields?: MoodleEditorField[] }).editorfields) {
+                const editorField = ((onlineTextPlugin as { editorfields?: MoodleEditorField[] }).editorfields || []).find((f) => f.name === 'onlinetext');
+                if (editorField && editorField.text) {
+                  onlineText = editorField.text;
+                }
               }
             }
             return (
@@ -112,19 +127,22 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
                   <span className="text-sm text-gray-700">User {sub.userid}</span>
                   <span className="ml-auto text-xs text-gray-400">Status: {sub.status}</span>
                 </div>
+                {/* Show online text if any */}
+                {onlineText && (
+                  <div className="mt-3">
+                    <h4 className="text-base font-semibold text-purple-600 mb-2 flex items-center gap-2">Online Text:</h4>
+                    <div className="prose prose-sm max-w-none text-gray-900 bg-purple-50 rounded-xl p-4 shadow-inner border border-purple-100" dangerouslySetInnerHTML={{ __html: onlineText }} />
+                    {/* Plagiarism checker button for online text */}
+                    <PlagiarismButton fileId={String(sub.id) + "-onlinetext"} title={`OnlineText-User${sub.userid}`} urlFor="moodle-text" textContent={onlineText} />
+                  </div>
+                )}
                 {/* Show attached files if any */}
                 {files.length > 0 && (
                   <div className="mt-3">
                     <h4 className="text-base font-semibold text-purple-600 mb-2 flex items-center gap-2">Files:</h4>
                     <div className="flex flex-wrap gap-4">
                       {files.map((file, i) => (
-                        <a
-                          key={i}
-                          href={file.fileurl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-col items-center gap-2 p-3 bg-purple-50 rounded shadow hover:bg-purple-100 transition w-40 max-w-full"
-                        >
+                        <div key={i} className="flex flex-col items-center gap-2 p-3 bg-purple-50 rounded shadow hover:bg-purple-100 transition w-40 max-w-full">
                           {file.mimetype && file.mimetype.startsWith('image/') ? (
                             <img
                               src={file.fileurl}
@@ -137,7 +155,18 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
                             </span>
                           )}
                           <span className="font-medium text-purple-800 text-center break-words w-full">{file.filename}</span>
-                        </a>
+                          <a
+                            href={file.fileurl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1 bg-gradient-to-r from-purple-500 to-blue-400 text-white rounded font-semibold flex items-center gap-1 hover:scale-105 transition-transform mt-1"
+                            title="View or Download"
+                          >
+                            <span className="hidden sm:inline">Download</span>
+                          </a>
+                          {/* Plagiarism checker button for file */}
+                          <PlagiarismButton fileId={file.fileurl} title={file.filename} urlFor="moodle-file" />
+                        </div>
                       ))}
                     </div>
                   </div>

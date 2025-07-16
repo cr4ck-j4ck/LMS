@@ -10,7 +10,7 @@ import Welcome from '../pages/Welcome';
 import MoodleAboard from "@/pages/MoodleAboard";
 import MoodleSyllabus from "../pages/MoodleSyllabus";
 import CanvasAboard from "@/pages/CanvasAboard";
-
+import CanvasSyllabus from "@/pages/CanvasSyllabus";
 const AppRoutes = () => {
     return (
         <Routes>
@@ -25,6 +25,7 @@ const AppRoutes = () => {
             <Route path="/ReportsPage" element={<ReportsPage/>} />            
             <Route path="/moodleAboard" element={<MoodleAboard/>} />
             <Route path="/moodle/syllabus/:courseId" element={<MoodleSyllabus />} />
+            <Route path="/canvas-syllabus/:courseId" element={<CanvasSyllabus />} />
         </Routes>
     )
 };

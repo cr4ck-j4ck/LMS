@@ -4,41 +4,75 @@ import axios from "axios";
 interface PlagiarismButtonProps {
   fileId: string;
   title: string;
+  urlFor: string;
+  textContent?: string;
 }
 
-const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId ,title}) => {
+const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlFor, textContent }) => {
   const [sending, setSending] = React.useState(false);
   const [success, setSuccess] = React.useState<boolean | null>(null);
   const handleClick = async () => {
     setSending(true);
     setSuccess(null);
+    let url: string;
     try {
-      // Build the URL as in Dashboard.tsx
-      const url = title.split(".").pop() == "pdf"
-        ? `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
-        : `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=text/plain`;
-      const res = await axios.post("http://localhost:3000/plagiarismCheck", { url }, { withCredentials: true });
-      if (res.status === 200) {
-        setSuccess(true);
-        // Save report to localStorage
-        const now = new Date();
-        const checkedAt = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        const similarity = res.data?.result?.score ?? 0;
-        const status = similarity > 30 ? "Flagged" : "Passed";
-        const report = {
-          id: `${fileId}-${now.getTime()}`,
-          fileName: title,
-          status,
-          similarity,
-          checkedAt,
-          link: "#", // can be updated to a real link if needed
-          fullReport: res.data
-        };
-        const prev = JSON.parse(localStorage.getItem("plagiarismReports") || "[]");
-        localStorage.setItem("plagiarismReports", JSON.stringify([report, ...prev]));
-        window.dispatchEvent(new Event("plagiarismReportAdded"));
+      if (textContent) {
+        // Send text for plagiarism check
+        const res = await axios.post("http://localhost:3000/plagiarismCheck", { text: textContent, urlFor }, { withCredentials: true });
+        if (res.status === 200) {
+          setSuccess(true);
+          // Save report to localStorage
+          const now = new Date();
+          const checkedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const similarity = res.data?.result?.score ?? 0;
+          const status = similarity > 30 ? "Flagged" : "Passed";
+          const report = {
+            id: `${fileId}-${now.getTime()}`,
+            fileName: title,
+            status,
+            similarity,
+            checkedAt,
+            link: "#",
+            fullReport: res.data
+          };
+          const prev = JSON.parse(localStorage.getItem("plagiarismReports") || "[]");
+          localStorage.setItem("plagiarismReports", JSON.stringify([report, ...prev]));
+          window.dispatchEvent(new Event("plagiarismReportAdded"));
+        } else {
+          setSuccess(false);
+        }
       } else {
-        setSuccess(false);
+        // Build the URL as in Dashboard.tsx
+        if (urlFor == "google") {
+          url = title.split(".").pop() == "pdf"
+            ? `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
+            : `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=text/plain`;
+        } else {
+          url = fileId;
+        }
+        const res = await axios.post("http://localhost:3000/plagiarismCheck", { url, urlFor }, { withCredentials: true });
+        if (res.status === 200) {
+          setSuccess(true);
+          // Save report to localStorage
+          const now = new Date();
+          const checkedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const similarity = res.data?.result?.score ?? 0;
+          const status = similarity > 30 ? "Flagged" : "Passed";
+          const report = {
+            id: `${fileId}-${now.getTime()}`,
+            fileName: title,
+            status,
+            similarity,
+            checkedAt,
+            link: "#", // can be updated to a real link if needed
+            fullReport: res.data
+          };
+          const prev = JSON.parse(localStorage.getItem("plagiarismReports") || "[]");
+          localStorage.setItem("plagiarismReports", JSON.stringify([report, ...prev]));
+          window.dispatchEvent(new Event("plagiarismReportAdded"));
+        } else {
+          setSuccess(false);
+        }
       }
     } catch {
       setSuccess(false);

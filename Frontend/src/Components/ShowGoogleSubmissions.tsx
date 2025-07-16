@@ -103,7 +103,7 @@ const ShowSubmissionsButton: React.FC<{ courseId: string; courseWorkId: string }
                         <span className="font-medium text-blue-700">{att.driveFile.title}</span>
                       </a>
                       {/* Plagiarism checker button for submission attachment */}
-                      {att.driveFile.id && <PlagiarismButton fileId={att.driveFile.id} title={att.driveFile.title}/>} 
+                      {att.driveFile.id && <PlagiarismButton fileId={att.driveFile.id} title={att.driveFile.title} urlFor="google"/>} 
                     </div>
                   ) : null
                 )}

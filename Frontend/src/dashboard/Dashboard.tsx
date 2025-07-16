@@ -75,6 +75,14 @@ const buttonConfigs: ButtonConfig[] = [
     hasLoading: true,
   },
   {
+    id: "canvasSyllabus",
+    heading: "Fetch all Syllabus of Canva Course",
+    url: "/api/v1/courses/{input0}?include[]=syllabus_body",
+    endpoint: "canvas-api",
+    inputLabels: ["Enter Course ID"],
+    hasLoading: true,
+  },
+  {
     id: "canvasEnrollments",
     heading: "List enrollments in the courses",
     url: "/api/v1/courses/{input0}/enrollments",
@@ -105,6 +113,14 @@ const buttonConfigs: ButtonConfig[] = [
     endpoint: "canvas-api",
     inputLabels: ["Enter Course ID", "Enter assignment ID"],
     hasLoading: true,
+  },
+  {
+    id: "getDataExtracted",
+    heading: "Get Extracted text of the File",
+    url: "https://canvas.instructure.com/files/305165318/download?download_frd=1&verifier=YTyqNXz9VvBkXEK1vy7V3rlDuzIVMyWtCgsZCbEk",
+    endpoint: "extract-text",
+    inputLabels: ["Enter Kuch Bhi nahi"],
+    hasLoading: true,
   }
 ];
 
@@ -119,7 +135,6 @@ const Dashboard: React.FC = () => {
   const handleServerClick = async (url: string, endPoint: string, setLoadingState: (loading: boolean) => void, buttonId: string) => {
     setLoadingState(true);
     try {
-      console.log(url);
       const res = await axios.post(
         `http://localhost:3000/${endPoint}`,
         {
@@ -131,7 +146,6 @@ const Dashboard: React.FC = () => {
         }
       );
       
-      console.log(res);
 
       let responseData = "";
       if (endPoint === "google-api") {

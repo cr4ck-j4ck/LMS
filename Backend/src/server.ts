@@ -8,7 +8,7 @@ import cors from "cors";
 import axios from "axios";
 import FileStore from "session-file-store";
 import { AxiosError } from "axios";
-
+import fs from "fs";
 dotenv.config();
 
 const app = express();
@@ -152,6 +152,7 @@ app.post("/google-api", async (req, res) => {
     console.log(req.sessionID);
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
+    console.log("yeh dekh access token idhar ",accessToken);
     console.log(url);
     if (!accessToken) {
       return res.send("You are not Logged In..");
@@ -180,7 +181,7 @@ app.post("/google-api", async (req, res) => {
 });
 
 app.post("/moodle-login", async (req, res) => {
-  console.log("Request aa rahi hai ",req.sessionID);
+  console.log("Request aa rahi hai ", req.sessionID);
   req.session.moodleInstituteName = req.body.institute;
   req.session.moodleAccessToken = req.body.authToken;
   console.log("req.user", req.session.moodleAccessToken);
@@ -188,7 +189,7 @@ app.post("/moodle-login", async (req, res) => {
 });
 
 app.post("/moodle-api", async (req, res) => {
-  console.log("yaha moodleAPI per aayi hai",req.session.moodleAccessToken);
+  console.log("yaha moodleAPI per aayi hai", req.session.moodleAccessToken);
   if (!req.session.moodleAccessToken) {
     return res.send("Please Login into Moodle First..");
   }
@@ -199,18 +200,7 @@ app.post("/moodle-api", async (req, res) => {
     }
     const properURL = url.replace("TOKEN_HERE", process.env.MOODLE_TOKEN);
     console.log("Moodle API URL:", properURL);
-    // const moodleResponse = await axios.get(properURL);
-    const moodleResponse = await axios.get(properURL,
-  {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-      'Accept': 'text/plain,*/*',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Cache-Control': 'no-cache'
-    },
-    responseType: 'text' // Important for text files
-  }
-);
+    const moodleResponse = await axios.get(properURL);
 
     // console.log(moodleResponse.data);
     res.json(moodleResponse.data);
@@ -219,7 +209,29 @@ app.post("/moodle-api", async (req, res) => {
     res.status(500).send("Error fetching data from Moodle API");
   }
 });
-//  https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=MY_TOKEN&wsfunction=core_files_get_files&moodlewsrestformat=json&contextid=104&component=assignsubmission_file&filearea=submission_files&itemid=2
+const path = "temp.pdf";
+
+async function extractText(url: string) {
+  const writer = fs.createWriteStream(path);
+  const response = await axios.get(url, { responseType: "stream" });
+  await new Promise<void>((resolve, reject) => {
+    response.data.pipe(writer);
+    writer.on("finish", () => resolve());
+    writer.on("error", reject);
+  });
+
+  const dataBuffer = fs.readFileSync(path);
+  const text = await pdf(dataBuffer);
+  fs.unlinkSync(path);
+
+  return text.text;
+}
+app.post("/extract-text", async (req, res) => {
+  console.log("got request!!");
+  const response = await extractText(req.body.url);
+  console.log(response);
+  res.send("Hello Extract ho gaya hai text");
+});
 app.post("/canvas-api", async (req, res) => {
   try {
     // const accessToken = req.user?.accessToken;
@@ -253,30 +265,42 @@ app.post("/canvas-api", async (req, res) => {
 });
 
 app.post("/plagiarismCheck", async (req, res, next) => {
+  console.log("idhar request aayi hai ");
   if (!req.user?.accessToken) {
     console.log("hai hi nahi access Token toh");
     return res.send("You are not allowed because you are not loggedin");
   }
-
+  
   try {
-    const googleResponse = await axios.get(req.body.url, {
-      headers: {
-        Authorization: `Bearer ${req.user?.accessToken}`,
-      },
-      responseType: "arraybuffer",
-    });
-    console.log(googleResponse.headers["content-type"]);
-    if (googleResponse.headers["content-type"] == "application/pdf") {
-      const buffer = Buffer.from(googleResponse.data);
-      const pdfData = await pdf(buffer);
-      const textContent = pdfData.text;
-      console.log(textContent);
-      // const plagiarismData = await plagiarismChecker(textContent)
-      // console.log(plagiarismData);
-      res.json(textContent);
-    } else {
-      res.send(googleResponse.data);
-    }
+    // if (req.body.urlFor = "google") {
+      console.log("google ke andar hai ");
+      const axiosResponse = await axios.get(req.body.url, {
+        headers: {
+          Authorization: `Bearer ${req.user?.accessToken}`,
+        },
+        responseType: "arraybuffer",
+      });
+      console.log(axiosResponse.headers["content-type"]);
+      if (axiosResponse.headers["content-type"] == "application/pdf") {
+        const buffer = Buffer.from(axiosResponse.data);
+        const pdfData = await pdf(buffer);
+        const textContent = pdfData.text;
+        console.log(textContent);
+        const plagiarismData = await plagiarismChecker(textContent)
+        console.log(plagiarismData);
+        res.json(plagiarismData);
+      } else {
+        // const plagiarismData = await plagiarismChecker(axiosResponse.data.toString());
+        res.send(axiosResponse.data);
+      }
+
+    // }else{
+    //   console.log("hey I am here, wait kar extract ho raha hai");
+    //   const extractedResponse = await extractText(req.body.url);
+    //   // const plagiarismData = await plagiarismChecker(extractedResponse)
+    //   console.log("extractedResponse",extractedResponse);
+    //   res.send(extractedResponse);      
+    // }
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data.toString());

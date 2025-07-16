@@ -94,7 +94,7 @@ const ReportsPage: React.FC = () => {
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl shadow-2xl bg-white/90 border border-blue-200 animate-fade-in">
-            <table className="min-w-full divide-y divide-blue-100">
+            <table className="min-w-full divide-y divide-blue-100 py-4 Yhide">
               <thead className="bg-gradient-to-r from-blue-100 to-purple-100">
                 <tr>
                   <th className="px-6 py-4 text-left text-lg font-bold text-blue-700 tracking-wider">#</th>
@@ -181,7 +181,7 @@ const ReportsPage: React.FC = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-blue-900 mb-2 flex items-center gap-2 break-words">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-blue-900 mb-2 flex items-center gap-2 break-words py-2 Yhide">
                       {modalReport.fileName}
                     </h2>
                     <div className="flex flex-wrap items-center gap-4 text-base text-blue-700 font-medium">
@@ -226,16 +226,16 @@ const ReportsPage: React.FC = () => {
                   {/* Document Text */}
                   <div className="bg-white/80 rounded-xl p-6 shadow border border-blue-50">
                     <div className="font-semibold text-blue-700 mb-3 flex items-center gap-2"><FaFileAlt className="text-blue-400" /> Document Text</div>
-                    <div className="text-gray-700 whitespace-pre-wrap text-base max-h-52 overflow-y-auto border-l-4 border-blue-200 pl-4">{modalReport.fullReport?.text}</div>
+                    <div className="text-gray-700 min-h-[30rem] whitespace-pre-wrap text-base max-h-52 overflow-y-auto border-l-4 border-blue-200 pl-4">{modalReport.fullReport?.text}</div>
                   </div>
                   {/* Sources Timeline */}
-                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 shadow border border-purple-100">
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-10 shadow border border-purple-100">
                     <div className="font-semibold text-purple-700 mb-4 flex items-center gap-2"><FaFileAlt className="text-purple-400" /> Sources Matched</div>
                     {modalReport.fullReport?.sources?.length ? (
-                      <ol className="relative border-l-4 border-purple-300 ml-2">
+                      <ol className="relative border-l-4 border-purple-300 ml-2 overflow-visible z-1">
                         {modalReport.fullReport.sources.map((src, i) => (
-                          <li key={i} className="mb-8 ml-6">
-                            <span className="absolute -left-4 flex items-center justify-center w-7 h-7 bg-purple-200 rounded-full ring-4 ring-white">
+                          <li key={i} className="mb-8 ml-6 ">
+                            <span className="absolute -left-4 z-10 flex items-center justify-center w-7 h-7 bg-white rounded-full ring-4 ring-purple-200 shadow">
                               <FaCheckCircle className="text-purple-500" />
                             </span>
                             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -255,7 +255,7 @@ const ReportsPage: React.FC = () => {
                     )}
                   </div>
                   {/* Word Stats */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 py-2">
                     <div className="bg-white/90 rounded-xl p-6 flex flex-col items-center shadow border border-blue-50">
                       <span className="text-xs text-blue-400">Plagiarism Words</span>
                       <span className="text-xl font-bold text-blue-700">{modalReport.fullReport?.result?.totalPlagiarismWords}</span>

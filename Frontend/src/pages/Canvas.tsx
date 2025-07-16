@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaLayerGroup } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface CanvasCourse {
   id: number;
@@ -16,6 +17,7 @@ const Canvas: React.FC = () => {
   const [courses, setCourses] = useState<CanvasCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -41,7 +43,7 @@ const Canvas: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 animate-fade-in">
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center py-5 ">
         <span className="animate-bounce-slow">
           <FaLayerGroup className="text-7xl text-purple-500 drop-shadow-lg" />
         </span>
@@ -65,12 +67,13 @@ const Canvas: React.FC = () => {
   return (
     <div className="px-4 py-8 min-h-screen bg-gradient-to-br from-purple-50 to-blue-100">
       <h1 className="text-4xl font-extrabold text-center text-purple-700 mb-10 drop-shadow-lg animate-fade-in">Canvas Courses</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="Yhide py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {courses.map((course, idx) => (
           <div
             key={course.id}
             className="cursor-pointer bg-white/90 rounded-3xl shadow-lg p-7 flex flex-col gap-3 border border-purple-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out animate-fade-in"
             style={{ animationDelay: `${idx * 60}ms` }}
+            onClick={() => navigate(`/canvas-syllabus/${course.id}`)}
           >
             <div className="flex items-center gap-3">
               <div className="min-w-12 min-h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center text-white text-2xl font-bold shadow-md">
@@ -88,7 +91,6 @@ const Canvas: React.FC = () => {
             </div>
             {course.calendar?.ics && (
               <a
-                href={course.calendar.ics}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block mt-2 px-4 py-2 bg-purple-700 rounded-lg font-semibold shadow hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 transition-colors duration-200"

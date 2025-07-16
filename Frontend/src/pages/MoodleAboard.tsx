@@ -22,7 +22,7 @@ const MoodleAboard: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await axios.post("http://localhost:3000/moodle-login",{
+    await axios.post("http://localhost:3000/moodle-login",{
       institute,authToken
     },{
       withCredentials:true
@@ -41,8 +41,8 @@ const MoodleAboard: React.FC = () => {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-400 to-pink-300 rounded-full opacity-30 blur-3xl animate-blob2 z-0" />
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-yellow-300 to-green-300 rounded-full opacity-20 blur-2xl animate-blob3 z-0" style={{transform: 'translate(-50%, -50%)'}} />
 
-      <div className="relative z-10 flex flex-col items-center text-center px-10 py-20 w-full">
-        <div className="flex items-center gap-6 mb-12 animate-fade-in overflow-visible pt-10 pb-5 overflow-y-hidden" style={{minHeight: '90px'}}>
+      <div className="relative z-10 flex flex-col overflow-y-hidden items-center text-center px-10 py-20 w-full">
+        <div className="flex items-center gap-6 mb-12 animate-fade-in pt-10 pb-5 overflow-x-hidden" style={{minHeight: '90px'}}>
           <FaRocket className="text-5xl text-green-500 animate-bounce relative" style={{top: 0}} />
           <h1 className="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 drop-shadow-xl animate-fade-in">Moodle Onboard</h1>
           <FaRegSmile className="text-5xl text-yellow-400 animate-wiggle" />
