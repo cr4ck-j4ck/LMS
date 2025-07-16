@@ -8,7 +8,9 @@ import Canvas from '../pages/Canvas';
 import ReportsPage from '../pages/ReportsPage';
 import Welcome from '../pages/Welcome';
 import MoodleAboard from "@/pages/MoodleAboard";
+import MoodleSyllabus from "../pages/MoodleSyllabus";
 import CanvasAboard from "@/pages/CanvasAboard";
+
 const AppRoutes = () => {
     return (
         <Routes>
@@ -19,9 +21,10 @@ const AppRoutes = () => {
             <Route path="/showClassroom" element={<ShowClassroom />} />
             <Route path="/moodle" element={<Moodle />} />
             <Route path="/canvas" element={<Canvas />} />
+            <Route path="/canvasAboard" element={<CanvasAboard />} />
             <Route path="/ReportsPage" element={<ReportsPage/>} />            
             <Route path="/moodleAboard" element={<MoodleAboard/>} />
-            <Route path="/canvasAboard" element={<CanvasAboard/>} />
+            <Route path="/moodle/syllabus/:courseId" element={<MoodleSyllabus />} />
         </Routes>
     )
 };

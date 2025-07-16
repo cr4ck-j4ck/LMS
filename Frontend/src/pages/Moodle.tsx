@@ -44,11 +44,11 @@ const Moodle: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 animate-fade-in">
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center py-3">
         <span className="animate-bounce-slow">
           <FaBookOpen className="text-7xl text-green-500 drop-shadow-lg" />
         </span>
-        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 animate-glow">Loading Moodle Courses...</span>
+        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 animate-glow Yhide py-3">Loading Moodle Courses...</span>
         <div className="mt-4 w-32 h-2 rounded-full bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 animate-pulse-glow" />
       </div>
       <style>{`
@@ -68,12 +68,13 @@ const Moodle: React.FC = () => {
   return (
     <div className="px-4 py-8 min-h-screen bg-gradient-to-br from-green-50 to-blue-100">
       <h1 className="text-4xl font-extrabold text-center text-green-700 mb-10 drop-shadow-lg animate-fade-in">Moodle Courses</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto py-10 Yhide">
         {courses.map((course, idx) => (
           <div
             key={course.id}
             className="cursor-pointer bg-white/90 rounded-3xl shadow-lg p-7 flex flex-col gap-3 border border-green-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out animate-fade-in"
             style={{ animationDelay: `${idx * 60}ms` }}
+            onClick={() => navigate(`/moodle/syllabus/${course.id}`)}
           >
             <div className="flex items-center gap-3">
               <div className="min-w-12 min-h-12 rounded-full bg-gradient-to-br from-green-400 to-blue-400 flex items-center justify-center text-white text-2xl font-bold shadow-md">

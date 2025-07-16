@@ -199,7 +199,18 @@ app.post("/moodle-api", async (req, res) => {
     }
     const properURL = url.replace("TOKEN_HERE", process.env.MOODLE_TOKEN);
     console.log("Moodle API URL:", properURL);
-    const moodleResponse = await axios.get(properURL);
+    // const moodleResponse = await axios.get(properURL);
+    const moodleResponse = await axios.get(properURL,
+  {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept': 'text/plain,*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Cache-Control': 'no-cache'
+    },
+    responseType: 'text' // Important for text files
+  }
+);
 
     // console.log(moodleResponse.data);
     res.json(moodleResponse.data);
@@ -260,7 +271,7 @@ app.post("/plagiarismCheck", async (req, res, next) => {
       const pdfData = await pdf(buffer);
       const textContent = pdfData.text;
       console.log(textContent);
-      // const plagiarismData = await plagiarismChecker("Web 3.0 has the potential to be just as disruptive and to usher in a significant paradigm shift as Web 2.0 did. The fundamental ideas of decentralization, openness and increased consumer usefulness form the foundation of Web 3.0. Web 3.0, often known as Web 3, is the next step in the development of the internet.")
+      // const plagiarismData = await plagiarismChecker(textContent)
       // console.log(plagiarismData);
       res.json(textContent);
     } else {
@@ -269,6 +280,7 @@ app.post("/plagiarismCheck", async (req, res, next) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data.toString());
+      console.log(error.response?.data.message);
       res.send("Error Occurred While Fetching , Error From (Backend)");
     } else {
       console.log(error);

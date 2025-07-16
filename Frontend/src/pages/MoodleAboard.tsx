@@ -27,7 +27,6 @@ const MoodleAboard: React.FC = () => {
     },{
       withCredentials:true
     });
-    console.log(res.data);
     setSubmitted(true);
     // Simulate API response 200 OK
     setTimeout(() => {
@@ -43,9 +42,9 @@ const MoodleAboard: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-yellow-300 to-green-300 rounded-full opacity-20 blur-2xl animate-blob3 z-0" style={{transform: 'translate(-50%, -50%)'}} />
 
       <div className="relative z-10 flex flex-col items-center text-center px-10 py-20 w-full">
-        <div className="flex items-center gap-6 mb-12 animate-fade-in overflow-visible pt-10" style={{minHeight: '90px'}}>
+        <div className="flex items-center gap-6 mb-12 animate-fade-in overflow-visible pt-10 pb-5 overflow-y-hidden" style={{minHeight: '90px'}}>
           <FaRocket className="text-5xl text-green-500 animate-bounce relative" style={{top: 0}} />
-          <h1 className="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 drop-shadow-xl animate-fade-in overflow-y-hidden">Moodle Onboard</h1>
+          <h1 className="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-700 via-blue-600 to-purple-500 drop-shadow-xl animate-fade-in">Moodle Onboard</h1>
           <FaRegSmile className="text-5xl text-yellow-400 animate-wiggle" />
         </div>
         <p className="text-xl sm:text-2xl text-gray-700 font-medium mb-14 animate-fade-in" style={{animationDelay: '0.2s'}}>Connect your <span className="text-green-600 font-bold">Moodle</span> by providing your <span className="text-blue-600 font-bold">Auth Token</span> and <span className="text-purple-600 font-bold">Institute Name</span>.</p>

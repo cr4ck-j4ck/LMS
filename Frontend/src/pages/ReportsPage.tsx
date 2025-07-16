@@ -75,11 +75,11 @@ const ReportsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 flex flex-col items-center py-12 px-2">
-      <div className="w-full max-w-5xl">
+      <div className="w-full max-w-5xl Yhide">
         <div className="flex items-center gap-4 mb-10 animate-fade-in">
           <FaFileAlt className="text-6xl text-blue-700 drop-shadow-lg" />
           <div>
-            <h1 className="text-5xl font-extrabold text-blue-800 tracking-tight drop-shadow-xl">Plagiarism Report Sheet</h1>
+            <h1 className="text-5xl font-extrabold text-blue-800 tracking-tight drop-shadow-xl py-2 -mb-4">Plagiarism Report Sheet</h1>
             <p className="text-lg text-blue-500 font-medium mt-2">All your plagiarism check results, at a glance</p>
           </div>
         </div>

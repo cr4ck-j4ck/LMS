@@ -8,10 +8,6 @@ const Login: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Login with Google clicked");
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6">
@@ -59,7 +55,6 @@ const Login: React.FC = () => {
         </div>
 
         <button
-          onClick={handleGoogleLogin}
           className="w-full google flex items-center justify-center gap-3 border border-gray-500 rounded-md py-2 hover:bg-gray-100 transition duration-200"
         >
           <svg

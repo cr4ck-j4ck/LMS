@@ -10,13 +10,13 @@ const Welcome: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-green-300 to-blue-300 rounded-full opacity-20 blur-2xl animate-blob3 z-0" style={{transform: 'translate(-50%, -50%)'}} />
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 py-16">
-        <div className="flex items-center gap-4 mb-6 animate-fade-in">
+        <div className="flex items-center gap-4 mb-6 animate-fade-in Yhide">
           <FaRocket className="text-6xl text-pink-500 animate-bounce" />
-          <h1 className="text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 drop-shadow-xl animate-fade-in">Welcome to HonestIQ!</h1>
+          <h1 className="text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 drop-shadow-xl animate-fade-in Yhide">Welcome to HonestIQ!</h1>
           <FaSmileBeam className="text-6xl text-yellow-400 animate-wiggle" />
         </div>
         <p className="text-2xl text-gray-700 font-medium mb-10 animate-fade-in" style={{animationDelay: '0.2s'}}>Your one-stop platform for <span className="text-blue-600 font-bold">learning</span>, <span className="text-purple-600 font-bold">collaboration</span>, and <span className="text-pink-600 font-bold">success</span>.</p>
-        <div className="flex flex-wrap justify-center gap-8 mb-12 animate-fade-in" style={{animationDelay: '0.4s'}}>
+        <div className="flex flex-wrap justify-center gap-8 mb-12 animate-fade-in Yhide" style={{animationDelay: '0.4s'}}>
           <div className="flex flex-col items-center bg-white/80 rounded-2xl shadow-lg p-8 min-w-[220px] hover:scale-105 transition-transform duration-300">
             <FaChalkboardTeacher className="text-5xl text-blue-600 mb-3 animate-pop" />
             <h2 className="text-xl font-bold text-blue-800 mb-1">Google Classroom</h2>

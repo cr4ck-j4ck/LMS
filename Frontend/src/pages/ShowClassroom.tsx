@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ShowSubmissionsButton from "../Components/ShowSubmissions";
+import ShowSubmissionsButton from "../Components/ShowGoogleSubmissions";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaChalkboardTeacher } from "react-icons/fa";
@@ -79,7 +79,6 @@ const ShowClassroom: React.FC = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
       const data = res.data;
-      console.log("data", data);
       if (data.courseWork && data.courseWork.length > 0) {
         const syllabusData: CourseWork[] = data.courseWork.map((work: CourseWork) => ({
           title: work.title,
@@ -104,11 +103,11 @@ const ShowClassroom: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col justify-center items-center h-full bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 animate-fade-in">
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center py-5">
         <span className="animate-bounce-slow">
           <FaChalkboardTeacher className="text-7xl text-blue-500 drop-shadow-lg" />
         </span>
-        <span className="mt-6 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 animate-glow">Loading Classroom Courses...</span>
+        <span className="mt-6 text-2xl py-5 font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 animate-glow">Loading Classroom Courses...</span>
         <div className="mt-4 w-32 h-2 rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-pulse-glow" />
       </div>
       <style>{`
@@ -128,7 +127,7 @@ const ShowClassroom: React.FC = () => {
   return (
     <div className="px-4 py-8 min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
       <h1 className="text-4xl font-extrabold text-center text-blue-700 mb-10 drop-shadow-lg animate-fade-in">Google Classroom Courses</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 py-3 gap-8 max-w-6xl mx-auto Yhide">
         {courses.map((course, idx) => (
           <div
             key={course.id}
@@ -219,16 +218,16 @@ const ShowClassroom: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="max-w-4xl mx-auto mt-16 p-8 bg-white/80 rounded-2xl shadow-lg border border-blue-100">
+      <div className="max-w-4xl mx-auto mt-16 p-8 bg-white/80 h-fit rounded-2xl shadow-lg border border-blue-100">
         <h2 className="text-2xl font-bold text-blue-700 mb-4">All Fetched Syllabus</h2>
         {syllabusLoading && <div className="text-blue-500 font-semibold">Loading syllabus...</div>}
         {syllabusError && <div className="text-red-500 font-semibold">{syllabusError}</div>}
         {syllabus.length > 0 && (
           <div className="space-y-8">
             {syllabus.map((item, idx) => (
-              <div key={item.id || idx} className="relative mb-45">
+              <div key={item.id || idx} className="relative min-h-fit pb-20 Yhide">
                 {/* Syllabus Item */}
-                <div className="animate-fade-in border border-blue-200 rounded-xl p-6 bg-white/50">
+                <div className="animate-fade-in border border-blue-200 rounded-xl p-6 bg-white/50 h-fit">
                   <h3 className="text-xl font-bold text-blue-800 mb-2">{item.title}</h3>
                   <p className="text-gray-700 mb-2 whitespace-pre-line">{item.description}</p>
                   <a href={item.alternateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-medium">View in Classroom</a>
@@ -250,7 +249,7 @@ const ShowClassroom: React.FC = () => {
                 </svg>
 
                 {/* Document Box  */}
-                <div className="absolute left-18 -bottom-20 w-2/3 bg-gray-50 rounded-lg p-6 border border-gray-200 shadow-md">
+                <div className="absolute left-18 -mt-20 w-2/3 bg-gray-50 rounded-lg p-6 border border-gray-200 shadow-md">
                   <h4 className="text-lg font-semibold text-gray-700 mb-3">Documents</h4>
                   {item.materials && item.materials.length > 0 ? (
                     <div className="flex flex-col gap-4">

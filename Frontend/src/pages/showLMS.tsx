@@ -31,16 +31,16 @@ const lmsList = [
 const MainPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex flex-col items-center justify-start py-12 px-2">
-      <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-12 drop-shadow-lg animate-fade-in">All LMS</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full max-w-5xl">
+      <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-12 drop-shadow-lg animate-fade-in Yhide">All LMS</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full max-w-5xl Yhide">
         {lmsList.map((lms, idx) => (
           <a
             href={lms.link}
             key={lms.name}
-            className={`group block rounded-3xl bg-gradient-to-br ${lms.bg} ${lms.shadow} p-8 transition-transform duration-300 hover:scale-105 hover:shadow-2xl animate-fade-in`}
+            className={`group block rounded-3xl bg-gradient-to-br ${lms.bg} ${lms.shadow} p-8 transition-transform duration-300 hover:scale-105 hover:shadow-2xl animate-fade-in Yhide`}
             style={{ animationDelay: `${idx * 120}ms` }}
           >
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4 Yhide">
               <div className="rounded-full bg-white shadow-lg p-5 mb-2 group-hover:scale-110 transition-transform duration-300">
                 {lms.icon}
               </div>
