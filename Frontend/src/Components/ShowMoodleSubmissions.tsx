@@ -98,7 +98,8 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
       </button>
       {error && <div className="text-red-500 mt-2">{error}</div>}
       {submissions && (
-        <div className="mt-6 space-y-4 animate-fade-in">
+        <div className="mt-8 space-y-8 animate-fade-in max-w-5xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-purple-700 mb-8 text-center drop-shadow-lg tracking-tight">Moodle Assignment Submissions</h2>
           {submittedSubmissions.length === 0 && <div className="text-gray-500 italic">No submissions found.</div>}
           {submittedSubmissions.map((sub) => {
             // Find file plugin and files
@@ -120,29 +121,39 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
                 }
               }
             }
+            // Decide what to send to plagiarism checker: prefer file if present, else text
+            let plagiarismButton = null;
+            if (files.length > 0) {
+              // If multiple files, send the first file (or you can combine them if needed)
+              plagiarismButton = (
+                <PlagiarismButton fileId={files[0].fileurl} title={files[0].filename} urlFor="moodle-file" />
+              );
+            } else if (onlineText) {
+              plagiarismButton = (
+                <PlagiarismButton fileId={String(sub.id) + "-onlinetext"} title={`OnlineText-User${sub.userid}`} urlFor="moodle-text" textContent={onlineText} />
+              );
+            }
             return (
-              <div key={sub.id} className="bg-white border border-purple-200 rounded-lg p-4 flex flex-col gap-2 shadow">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-purple-700">Submission by:</span>
-                  <span className="text-sm text-gray-700">User {sub.userid}</span>
+              <div key={sub.id} className="bg-white/90 border border-purple-200 rounded-2xl p-8 flex flex-col gap-6 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <div className="flex flex-wrap items-center gap-4 mb-2">
+                  <span className="font-semibold text-purple-700 text-lg">Submission by:</span>
+                  <span className="text-base text-gray-700">User {sub.userid}</span>
                   <span className="ml-auto text-xs text-gray-400">Status: {sub.status}</span>
                 </div>
                 {/* Show online text if any */}
                 {onlineText && (
-                  <div className="mt-3">
-                    <h4 className="text-base font-semibold text-purple-600 mb-2 flex items-center gap-2">Online Text:</h4>
-                    <div className="prose prose-sm max-w-none text-gray-900 bg-purple-50 rounded-xl p-4 shadow-inner border border-purple-100" dangerouslySetInnerHTML={{ __html: onlineText }} />
-                    {/* Plagiarism checker button for online text */}
-                    <PlagiarismButton fileId={String(sub.id) + "-onlinetext"} title={`OnlineText-User${sub.userid}`} urlFor="moodle-text" textContent={onlineText} />
+                  <div className="mt-2">
+                    <h4 className="text-lg font-semibold text-purple-600 mb-2 flex items-center gap-2">Online Text:</h4>
+                    <div className="prose prose-base max-w-none text-gray-900 bg-purple-50 rounded-xl p-5 shadow-inner border border-purple-100 mb-4" dangerouslySetInnerHTML={{ __html: onlineText }} />
                   </div>
                 )}
                 {/* Show attached files if any */}
                 {files.length > 0 && (
-                  <div className="mt-3">
-                    <h4 className="text-base font-semibold text-purple-600 mb-2 flex items-center gap-2">Files:</h4>
-                    <div className="flex flex-wrap gap-4">
+                  <div className="mt-2">
+                    <h4 className="text-lg font-semibold text-purple-600 mb-4 flex items-center gap-2">Files:</h4>
+                    <div className="flex flex-col gap-4">
                       {files.map((file, i) => (
-                        <div key={i} className="flex flex-col items-center gap-2 p-3 bg-purple-50 rounded shadow hover:bg-purple-100 transition w-40 max-w-full">
+                        <div key={i} className="flex flex-row items-center gap-6 bg-purple-50 rounded-xl p-5 border border-purple-100 shadow hover:bg-purple-100 transition-all w-full max-w-3xl mx-auto">
                           {file.mimetype && file.mimetype.startsWith('image/') ? (
                             <img
                               src={file.fileurl}
@@ -150,25 +161,31 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
                               className="w-20 h-20 object-contain rounded border border-purple-200 bg-gray-50"
                             />
                           ) : (
-                            <span className="text-3xl text-purple-400">
+                            <span className="text-4xl text-purple-400">
                               <i className="fas fa-file-alt" />
                             </span>
                           )}
-                          <span className="font-medium text-purple-800 text-center break-words w-full">{file.filename}</span>
-                          <a
-                            href={file.fileurl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-1 bg-gradient-to-r from-purple-500 to-blue-400 text-white rounded font-semibold flex items-center gap-1 hover:scale-105 transition-transform mt-1"
-                            title="View or Download"
-                          >
-                            <span className="hidden sm:inline">Download</span>
-                          </a>
-                          {/* Plagiarism checker button for file */}
-                          <PlagiarismButton fileId={file.fileurl} title={file.filename} urlFor="moodle-file" />
+                          <div className="flex-1 min-w-0">
+                            <span className="font-medium text-purple-800 text-lg break-words w-full block">{file.filename}</span>
+                            <a
+                              href={file.fileurl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-2 px-4 py-1 bg-gradient-to-r from-purple-500 to-blue-400 text-white rounded font-semibold hover:scale-105 transition-transform shadow"
+                              title="View or Download"
+                            >
+                              Download
+                            </a>
+                          </div>
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+                {/* Single plagiarism checker button for the whole submission */}
+                {plagiarismButton && (
+                  <div className="flex justify-end mt-4">
+                    {plagiarismButton}
                   </div>
                 )}
               </div>
