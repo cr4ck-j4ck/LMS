@@ -51,7 +51,8 @@ const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlF
           url = fileId;
         }
         const res = await axios.post("http://localhost:3000/plagiarismCheck", { url, urlFor }, { withCredentials: true });
-        if (res.status === 200) {
+        console.log(res.data);
+        if (res.status === 200 && res.data != "error aa gayi bhai") {
           setSuccess(true);
           // Save report to localStorage
           const now = new Date();
@@ -64,7 +65,7 @@ const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlF
             status,
             similarity,
             checkedAt,
-            link: "#", // can be updated to a real link if needed
+            link: "#", 
             fullReport: res.data
           };
           const prev = JSON.parse(localStorage.getItem("plagiarismReports") || "[]");

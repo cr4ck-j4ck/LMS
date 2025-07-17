@@ -40,7 +40,7 @@ const MainPage: React.FC = () => {
             className={`group block rounded-3xl bg-gradient-to-br ${lms.bg} ${lms.shadow} p-8 transition-transform duration-300 hover:scale-105 hover:shadow-2xl animate-fade-in Yhide`}
             style={{ animationDelay: `${idx * 120}ms` }}
           >
-            <div className="flex flex-col items-center gap-4 Yhide">
+            <div className="flex flex-col items-center gap-4 overflow-hidden p-4">
               <div className="rounded-full bg-white shadow-lg p-5 mb-2 group-hover:scale-110 transition-transform duration-300">
                 {lms.icon}
               </div>

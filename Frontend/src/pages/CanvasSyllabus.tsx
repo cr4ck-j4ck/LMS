@@ -147,10 +147,12 @@ const CanvasSyllabus: React.FC = () => {
             </a>
           )}
           <div
-            className="prose prose-lg max-w-none text-gray-900 bg-white rounded-2xl p-10 shadow-xl border border-purple-100 animate-fade-in syllabus-html"
+            className="prose prose-lg max-w-none text-gray-900 bg-white rounded-2xl p-10 shadow-xl border border-purple-100 animate-fade-in syllabus-html mb-12"
             style={{ minHeight: 200, lineHeight: 1.8, fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}
             dangerouslySetInnerHTML={{ __html: data?.syllabus_body || '<div class="text-gray-400 italic">No syllabus available.</div>' }}
           />
+          {/* Divider to separate syllabus and assignments */}
+          <hr className="my-10 border-t-2 border-purple-200" />
           {/* Assignments Section */}
           <div className="mt-14">
             <h2 className="text-3xl font-extrabold text-purple-700 mb-6 flex items-center gap-3"><span>📚</span>Assignments</h2>

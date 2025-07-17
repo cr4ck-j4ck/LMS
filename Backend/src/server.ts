@@ -9,6 +9,8 @@ import axios from "axios";
 import FileStore from "session-file-store";
 import { AxiosError } from "axios";
 import fs from "fs";
+import * as mammoth from "mammoth";
+
 dotenv.config();
 
 const app = express();
@@ -152,7 +154,7 @@ app.post("/google-api", async (req, res) => {
     console.log(req.sessionID);
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
-    console.log("yeh dekh access token idhar ",accessToken);
+    console.log("yeh dekh access token idhar ", accessToken);
     console.log(url);
     if (!accessToken) {
       return res.send("You are not Logged In..");
@@ -212,6 +214,7 @@ app.post("/moodle-api", async (req, res) => {
 const path = "temp.pdf";
 
 async function extractText(url: string) {
+  console.log("Request Recieved", url);
   const writer = fs.createWriteStream(path);
   const response = await axios.get(url, { responseType: "stream" });
   await new Promise<void>((resolve, reject) => {
@@ -265,42 +268,63 @@ app.post("/canvas-api", async (req, res) => {
 });
 
 app.post("/plagiarismCheck", async (req, res, next) => {
-  console.log("idhar request aayi hai ");
   if (!req.user?.accessToken) {
     console.log("hai hi nahi access Token toh");
     return res.send("You are not allowed because you are not loggedin");
   }
-  
   try {
-    // if (req.body.urlFor = "google") {
-      console.log("google ke andar hai ");
-      const axiosResponse = await axios.get(req.body.url, {
-        headers: {
-          Authorization: `Bearer ${req.user?.accessToken}`,
-        },
-        responseType: "arraybuffer",
-      });
-      console.log(axiosResponse.headers["content-type"]);
-      if (axiosResponse.headers["content-type"] == "application/pdf") {
-        const buffer = Buffer.from(axiosResponse.data);
-        const pdfData = await pdf(buffer);
-        const textContent = pdfData.text;
-        console.log(textContent);
-        const plagiarismData = await plagiarismChecker(textContent)
-        console.log(plagiarismData);
-        res.json(plagiarismData);
-      } else {
-        // const plagiarismData = await plagiarismChecker(axiosResponse.data.toString());
-        res.send(axiosResponse.data);
-      }
+    let url: string = req.body.url;
+    let headers;
 
-    // }else{
-    //   console.log("hey I am here, wait kar extract ho raha hai");
-    //   const extractedResponse = await extractText(req.body.url);
-    //   // const plagiarismData = await plagiarismChecker(extractedResponse)
-    //   console.log("extractedResponse",extractedResponse);
-    //   res.send(extractedResponse);      
-    // }
+    if (req.body.urlFor === "moodle-file") {
+      url = `${url}?token=${process.env.MOODLE_TOKEN}`;
+      headers = {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Accept:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/octet-stream,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        Connection: "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+      };
+    } else {
+      headers = {
+        Authorization: `Bearer ${req.user?.accessToken}`,
+      };
+    }
+    const axiosResponse = await axios.get(url, {
+      headers,
+      responseType: "arraybuffer",
+    });
+    console.log("-----------------", axiosResponse.headers["content-type"]);
+    console.log(axiosResponse.data);
+    if (axiosResponse.headers["content-type"] == "application/pdf") {
+      console.log("checking the pdf..");
+      const buffer = Buffer.from(axiosResponse.data);
+      const pdfData = await pdf(buffer);
+      const textContent = pdfData.text;
+      // Plagiarism Checker
+      // const plagiarismResult = plagiarismChecker(textContent);
+      console.log(textContent);
+      res.json(textContent);
+    } else if (
+      axiosResponse.headers["content-type"] ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const result = await mammoth.extractRawText({
+        buffer: axiosResponse.data,
+      });
+      // Plagiarism Checker
+      // const plagiarismResult = await plagiarismChecker(result.value);
+      // console.log(result.value);
+      res.send(result.value);
+    } else {
+      // Plagiarism Checker
+      // const plagiarismResult = await plagiarismChecker(axiosResponse.data);
+      // console.log(axiosResponse.data);
+      res.send(axiosResponse.data);
+    }
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data.toString());

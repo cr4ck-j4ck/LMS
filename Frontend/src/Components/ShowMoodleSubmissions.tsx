@@ -59,7 +59,7 @@ const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance 
       const res = await axios.post("http://localhost:3000/moodle-api", {
         url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_submissions&moodlewsrestformat=json&assignmentids[0]=${instance}`
       }, { withCredentials: true });
-
+      console.log(res.data);
       // The response structure: { assignments: [{ id, submissions: [...] }] }
       const assignments: MoodleAssignment[] = res.data.assignments || [];
       const found = assignments.find((a) => String(a.assignmentid) === String(instance));
