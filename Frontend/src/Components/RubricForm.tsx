@@ -39,10 +39,6 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
     subject: '',
     gradeLevel: ''
   })
-  
-
-
-
   const [criteria, setCriteria] = useState<RubricCriterion[]>([
     {
       id: '1',
@@ -84,11 +80,11 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
     const file = event.target.files?.[0]
     if (!file) return
 
-    if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-      toast.error('Please upload a CSV file')
+    console.log('Selected file type:', file.type) // Debug log
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      toast.error('Please upload a file with .csv extension')
       return
     }
-
     const reader = new FileReader()
     reader.onload = (e) => {
       try {
@@ -102,11 +98,11 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
           setCriteria(parsedCriteria)
           toast.success(`Successfully imported ${parsedCriteria.length} criteria from CSV`)
         } else {
-          toast.error('No valid criteria found in CSV file')
+          toast.error('No valid criteria found in CSV file. Please ensure your file matches the template format.')
         }
       } catch (error) {
         console.error('Error parsing CSV:', error)
-        toast.error(`Error parsing CSV file: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        toast.error(`Error parsing CSV file: ${error instanceof Error ? error.message : 'Unknown error'}. Please ensure your file matches the template format.`)
       }
     }
     reader.onerror = () => {

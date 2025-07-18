@@ -29,6 +29,7 @@ const AssignmentUpload: React.FC<AssignmentUploadProps> = ({ onSubmit, rubric, o
     
     try {
       if (file.type === 'application/pdf') {
+        console.log(file.type);
         setFileType('pdf')
         const extractedText = await extractTextFromPDF(file)
         setFormData(prev => ({ ...prev, content: extractedText }))

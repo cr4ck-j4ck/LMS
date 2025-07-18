@@ -9,8 +9,7 @@ import { createGradingPrompt } from "../Controllers/controllers";
 import OpenAI from "openai";
 import { calculateLetterGrade } from "../Controllers/controllers";
 import { plagiarismChecker } from "../Controllers/controllers";
-import mammoth from 'mammoth';
-
+import mammoth from "mammoth";
 
 router.get(
   "/login",
@@ -122,7 +121,6 @@ router.post("/canvas-api", async (req, res) => {
       return res.status(400).send("URL is required in request body");
     }
 
-
     const canvasResponse = await axios.get(
       `https://canvas.instructure.com${url}`,
       {
@@ -186,7 +184,9 @@ router.post("/plagiarismCheck", async (req, res, next) => {
       res.send(plagiarismResult);
     } else {
       // Plagiarism Checker
-      const plagiarismResult = await plagiarismChecker(axiosResponse.data.toString());
+      const plagiarismResult = await plagiarismChecker(
+        axiosResponse.data.toString()
+      );
       console.log(plagiarismResult);
       res.send(plagiarismResult);
     }
@@ -201,7 +201,6 @@ router.post("/plagiarismCheck", async (req, res, next) => {
     }
   }
 });
-
 
 // Configure multer for file uploads
 const upload = multer({
@@ -219,6 +218,7 @@ const upload = multer({
 });
 
 router.post("/api/extract-text", upload.single("file"), async (req, res) => {
+  console.log("got request");
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -258,13 +258,10 @@ router.post("/api/extract-text", upload.single("file"), async (req, res) => {
   }
 });
 
-
-
-// Initialize OpenAI client for DeepSeek-V3
 const openai = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: 'openai_endpoint'
-})
+  baseURL: "https://openrouter.ai/api/v1",
+});
 
 router.post("/api/grade", async (req, res) => {
   try {
@@ -522,4 +519,4 @@ router.get("/api/health", (req, res) => {
   });
 });
 
-export default router
+export default router;

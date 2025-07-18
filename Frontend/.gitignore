@@ -6,7 +6,7 @@
 
 # Dependencies
 node_modules/
-
+Time_Space_Complexity_Assessment_Rubric.csv
 # Build outputs
 dist/
 build/
