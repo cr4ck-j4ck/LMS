@@ -11,6 +11,7 @@ import MoodleAboard from "@/pages/MoodleAboard";
 import MoodleSyllabus from "../pages/MoodleSyllabus";
 import CanvasAboard from "@/pages/CanvasAboard";
 import CanvasSyllabus from "@/pages/CanvasSyllabus";
+import RubricMainPage from "@/pages/Rubric/RubricMainPage";
 const AppRoutes = () => {
     return (
         <Routes>
@@ -26,6 +27,7 @@ const AppRoutes = () => {
             <Route path="/moodleAboard" element={<MoodleAboard/>} />
             <Route path="/moodle/syllabus/:courseId" element={<MoodleSyllabus />} />
             <Route path="/canvas-syllabus/:courseId" element={<CanvasSyllabus />} />
+            <Route path="/rubricMainPage" element={<RubricMainPage />} />
         </Routes>
     )
 };

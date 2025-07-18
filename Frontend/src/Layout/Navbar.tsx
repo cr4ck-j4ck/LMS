@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserGraduate } from "react-icons/fa";
 
@@ -21,6 +20,12 @@ const Navbar: React.FC = () => {
             className={`px-6 py-2 rounded-full font-semibold text-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white hover:scale-105 hover:from-blue-600 hover:to-pink-600 ${location.pathname === "/ReportsPage" ? "ring-2 ring-blue-400" : ""}`}
           >
             Reports
+          </Link>
+          <Link
+            to="/rubricMainPage"
+            className={`px-6 py-2 rounded-full font-semibold text-lg shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 text-white hover:scale-105 hover:from-green-600 hover:to-purple-600 ${location.pathname === "/rubricMainPage" ? "ring-2 ring-green-400" : ""}`}
+          >
+            Rubric Generator
           </Link>
           <Link
             to="/login"

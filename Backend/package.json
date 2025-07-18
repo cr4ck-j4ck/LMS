@@ -11,6 +11,8 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "mammoth": "^1.9.1",
+    "multer": "^2.0.1",
+    "openai": "^5.10.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pdf-parse": "^1.1.1"
@@ -26,6 +28,7 @@
     "@types/http-errors": "^2.0.5",
     "@types/json-schema": "^7.0.15",
     "@types/mime": "^3.0.4",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.0.12",
     "@types/oauth": "^0.9.6",
     "@types/passport": "^1.0.17",

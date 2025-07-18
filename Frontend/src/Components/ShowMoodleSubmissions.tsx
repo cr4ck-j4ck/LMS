@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
 import PlagiarismButton from "./PlagiarismButton";
 
@@ -46,9 +46,9 @@ interface MoodleEditorField {
 }
 
 const ShowMoodleSubmissionsButton: React.FC<{ instance: number }> = ({ instance }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [submissions, setSubmissions] = React.useState<MoodleSubmission[] | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [submissions, setSubmissions] = useState<MoodleSubmission[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
 
   const handleClick = async () => {

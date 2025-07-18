@@ -1,4 +1,3 @@
-import React from "react";
 import { FaChalkboardTeacher, FaBookOpen, FaLayerGroup, FaRocket, FaSmileBeam, FaMagic, FaUserGraduate } from "react-icons/fa";
 import { Link } from "react-router-dom";
 const Welcome: React.FC = () => {

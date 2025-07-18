@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
 import PlagiarismButton from "./PlagiarismButton";
 
@@ -22,9 +22,9 @@ interface StudentSubmission {
 }
 
 const ShowSubmissionsButton: React.FC<{ courseId: string; courseWorkId: string }> = ({ courseId, courseWorkId }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [submissions, setSubmissions] = React.useState<StudentSubmission[] | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [submissions, setSubmissions] = useState<StudentSubmission[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   if(!courseId && courseWorkId ){
     console.log(`Please give the Appropriate Details Course id "${courseId}" and CourseWorkID is "${courseWorkId}"`);
     return (<h1 className="text-black">Wrong Info</h1>);

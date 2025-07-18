@@ -1,6 +1,5 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
-
 interface PlagiarismButtonProps {
   fileId: string;
   title: string;
@@ -9,8 +8,8 @@ interface PlagiarismButtonProps {
 }
 
 const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlFor, textContent }) => {
-  const [sending, setSending] = React.useState(false);
-  const [success, setSuccess] = React.useState<boolean | null>(null);
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const handleClick = async () => {
     setSending(true);
     setSuccess(null);

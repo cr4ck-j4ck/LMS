@@ -1,4 +1,3 @@
-import React from "react";
 import { FaChalkboardTeacher, FaBookOpen, FaLayerGroup } from "react-icons/fa";
 
 const lmsList = [

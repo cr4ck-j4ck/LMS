@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
 import PlagiarismButton from "./PlagiarismButton";
 
@@ -49,11 +49,11 @@ function getCanvasDownloadUrl(url: string): string {
 }
 
 const ShowCanvasSubmissionsButton: React.FC<{ courseId: string | number; assignmentId: string | number }> = ({ courseId, assignmentId }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [submissions, setSubmissions] = React.useState<CanvasSubmission[] | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
-  const [open, setOpen] = React.useState(false);
-  const [fetched, setFetched] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submissions, setSubmissions] = useState<CanvasSubmission[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [fetched, setFetched] = useState(false);
 
   const handleClick = async () => {
     if (!fetched) {
