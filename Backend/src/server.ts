@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = [process.env.FRONTEND_URL];
 
 declare module "express-session" {
   interface SessionData {
