@@ -58,7 +58,7 @@ const CanvasSyllabus: React.FC = () => {
       setError(null);
       try {
         const res = await axios.post(
-          "http://localhost:3000/canvas-api",
+          `${import.meta.env.VITE_BACKEND_URL}/canvas-api`,
           {
             url: `/api/v1/courses/${courseId}?include[]=syllabus_body`
           },
@@ -80,7 +80,7 @@ const CanvasSyllabus: React.FC = () => {
       setAssignmentsError(null);
       try {
         const res = await axios.post(
-          "http://localhost:3000/canvas-api",
+          `${import.meta.env.VITE_BACKEND_URL}/canvas-api`,
           {
             url: `/api/v1/courses/${courseId}/assignments`
           },

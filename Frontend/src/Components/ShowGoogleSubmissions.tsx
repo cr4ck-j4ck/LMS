@@ -34,7 +34,7 @@ const ShowSubmissionsButton: React.FC<{ courseId: string; courseWorkId: string }
     setError(null);
     setSubmissions(null);
     try {
-      const res = await axios.post("http://localhost:3000/google-api", {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/google-api`, {
         url: `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork/${courseWorkId}/studentSubmissions`
       }, { withCredentials: true });
       setSubmissions(res.data.studentSubmissions || []);

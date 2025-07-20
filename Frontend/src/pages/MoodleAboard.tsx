@@ -22,7 +22,7 @@ const MoodleAboard: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await axios.post("http://localhost:3000/moodle-login",{
+    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/moodle-login`,{
       institute,authToken
     },{
       withCredentials:true

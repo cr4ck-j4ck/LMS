@@ -17,7 +17,7 @@ const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlF
     try {
       if (textContent) {
         // Send text for plagiarism check
-        const res = await axios.post("http://localhost:3000/plagiarismCheck", { text: textContent, urlFor }, { withCredentials: true });
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/plagiarismCheck`, { text: textContent, urlFor }, { withCredentials: true });
         if (res.status === 200) {
           setSuccess(true);
           // Save report to localStorage
@@ -49,7 +49,7 @@ const PlagiarismButton: React.FC<PlagiarismButtonProps> = ({ fileId, title, urlF
         } else {
           url = fileId;
         }
-        const res = await axios.post("http://localhost:3000/plagiarismCheck", { url, urlFor }, { withCredentials: true });
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/plagiarismCheck`, { url, urlFor }, { withCredentials: true });
         console.log(res.data);
         if (res.status === 200 && res.data != "error aa gayi bhai") {
           setSuccess(true);

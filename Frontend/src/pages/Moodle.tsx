@@ -22,7 +22,7 @@ const Moodle: React.FC = () => {
       setError(null);
       try {
         const res = await axios.post(
-          "http://localhost:3000/moodle-api",
+          `${import.meta.env.VITE_BACKEND_URL}/moodle-api`,
           {
             url: "https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_courses&moodlewsrestformat=json"
           },

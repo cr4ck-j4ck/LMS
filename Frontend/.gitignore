@@ -3,7 +3,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
-
+.env
 # Dependencies
 node_modules/
 Time_Space_Complexity_Assessment_Rubric.csv

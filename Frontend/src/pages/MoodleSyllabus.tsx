@@ -45,13 +45,9 @@ const MoodleSyllabus: React.FC = () => {
       setError(null);
       try {
         const res = await axios.post(
-          "http://localhost:3000/moodle-api",
+          `${import.meta.env.VITE_BACKEND_URL}/moodle-api`,
           {
-            // url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_assignments&moodlewsrestformat=json&courseids[0]=9`
             url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid=${courseId}&options[0][name]=includestealthmodules&options[0][value]=1`
-            // url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid=${courseId}`
-            
-            // url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_assignments&moodlewsrestformat=json&courseids[0]=${courseId}`
           },
           { withCredentials: true, headers: { "Content-Type": "application/json" } }
         );
@@ -71,7 +67,7 @@ const MoodleSyllabus: React.FC = () => {
     setAttachmentsError(prev => ({ ...prev, [assignId]: null }));
     try {
       const res = await axios.post(
-        "http://localhost:3000/moodle-api",
+        `${import.meta.env.VITE_BACKEND_URL}/moodle-api`,
         {
           url: `https://cr4ck-j4ck.moodlecloud.com/webservice/rest/server.php?wstoken=TOKEN_HERE&wsfunction=mod_assign_get_assignments&moodlewsrestformat=json&courseids[0]=${courseId}`
         },

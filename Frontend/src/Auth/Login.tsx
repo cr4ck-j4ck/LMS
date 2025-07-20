@@ -79,7 +79,7 @@ const Login: React.FC = () => {
               d="M272 107.7c39.5 0 75 13.6 102.8 40.4l77.1-77.1C399.4 24.1 340.3 0 272 0 167.4 0 76.7 58.1 32.2 153l88.5 69.8c21.2-64 80.9-111.5 151.3-111.5z"
             />
           </svg>
-          <a href="http://localhost:3000/login" className="la">
+          <a href={`${import.meta.env.VITE_BACKEND_URL}/login`} className="la">
           Login with Google
           </a>
         </button>

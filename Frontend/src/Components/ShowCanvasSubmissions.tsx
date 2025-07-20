@@ -61,7 +61,7 @@ const ShowCanvasSubmissionsButton: React.FC<{ courseId: string | number; assignm
       setError(null);
       setSubmissions(null);
       try {
-        const res = await axios.post("http://localhost:3000/canvas-api", {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/canvas-api`, {
           url: `/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions`
         }, { withCredentials: true });
         setSubmissions(res.data || []);

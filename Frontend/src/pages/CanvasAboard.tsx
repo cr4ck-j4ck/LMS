@@ -22,7 +22,7 @@ const CanvasAboard: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await axios.post("http://localhost:3000/canvas-login",{
+    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/canvas-login`,{
       institute,authToken
     },{
       withCredentials:true

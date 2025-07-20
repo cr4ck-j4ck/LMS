@@ -50,7 +50,7 @@ const ShowClassroom: React.FC = () => {
       setError(null);
       try {
         const res = await axios.post(
-          "http://localhost:3000/google-api",
+          `${import.meta.env.VITE_BACKEND_URL}/google-api`,
           { url: "https://classroom.googleapis.com/v1/courses" },
           { withCredentials: true, headers: { "Content-Type": "application/json" } }
         );
@@ -74,7 +74,7 @@ const ShowClassroom: React.FC = () => {
     setSyllabusLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:3000/google-api",
+        `${import.meta.env.VITE_BACKEND_URL}/google-api`,
         { url: `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork` },
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );

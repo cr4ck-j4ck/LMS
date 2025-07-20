@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
     setLoadingState(true);
     try {
       const res = await axios.post(
-        `http://localhost:3000/${endPoint}`,
+        `${import.meta.env.VITE_BACKEND_URL}/${endPoint}`,
         {
           url,
         },

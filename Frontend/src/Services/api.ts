@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { RubricData, AssignmentData, GradingResult, ApiResponse } from '@/Types'
 
-const API_BASE_URL = 'http://localhost:3000/api'
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`
 
 export const gradeAssignment = async (
   rubric: RubricData,
