@@ -5,9 +5,8 @@
     "moduleResolution": "node",
     "rootDir": "./src",
     "outDir": "./Dist",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"],                               // ✅ Add this
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -16,10 +15,12 @@
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "resolveJsonModule": true                         // ✅ Optional
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "declarations.d.ts"                              // ✅ Add this for custom types
   ],
   "exclude": [
     "node_modules",

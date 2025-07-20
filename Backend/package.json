@@ -29,7 +29,7 @@
     "@types/json-schema": "^7.0.15",
     "@types/mime": "^3.0.4",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.0.12",
+    "@types/node": "^24.0.15",
     "@types/oauth": "^0.9.6",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
