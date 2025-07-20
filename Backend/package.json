@@ -45,7 +45,7 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "start": "node --ignore sessions/ Dist/server.js",
+    "start": "node sessions/ Dist/server.js",
     "build": "tsc",
     "watch": "tsc --watch",
     "dev": "nodemon --ignore sessions/ Dist/server.js",
