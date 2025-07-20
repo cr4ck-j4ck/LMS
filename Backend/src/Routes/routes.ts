@@ -28,8 +28,8 @@ router.get(
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: `http://localhost:3000/login-failure`,
-    successRedirect: `http://localhost:5173/showLMS`,
+    failureRedirect: `https://backend-honestiq.onrender.com/login-failure`,
+    successRedirect: `${process.env.FRONTEND_URL}/showLMS`,
   })
 );
 
