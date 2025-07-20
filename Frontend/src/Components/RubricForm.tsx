@@ -288,7 +288,7 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <FileText className="w-6 h-6 text-blue-600 mr-3" />
-          <h2 className="text-2xl font-bold text-gray-900">Create Assessment Rubric</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Create Assignment Rubric</h2>
         </div>
       </div>
 
@@ -397,7 +397,7 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
               <div className="text-sm text-blue-800 space-y-2">
                 <p><strong>Required columns (in this exact order):</strong></p>
                 <ul className="list-disc ml-6 space-y-1">
-                  <li><code>criterion_name</code> - Name of the assessment criterion</li>
+                  <li><code>criterion_name</code> - Name of the Assignment criterion</li>
                   <li><code>criterion_description</code> - Description of the criterion</li>
                   <li><code>weight</code> - Percentage weight (must total 100% across all criteria)</li>
                   <li><code>level_1_name</code> - Name for performance level 1</li>
@@ -422,7 +422,7 @@ const RubricForm: React.FC<RubricFormProps> = ({ onSubmit }) => {
         {/* Criteria Section */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-gray-900">Assessment Criteria</h3>
+            <h3 className="text-xl font-semibold text-gray-900">Assignment Criteria</h3>
             <div className="flex items-center space-x-4">
               <span className={`text-sm font-medium ${
                 Math.abs(totalWeight - 100) < 0.1 ? 'text-green-600' : 'text-red-600'
