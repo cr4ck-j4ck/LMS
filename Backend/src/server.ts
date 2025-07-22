@@ -72,9 +72,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,         // ⚠️ Use `true` if your site is on HTTPS (Vercel, etc.)
+      secure: true,         // ⚠️ Use `true` if your site is on HTTPS (Vercel, etc.)
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
