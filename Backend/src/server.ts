@@ -5,8 +5,8 @@ import "./auth";
 import dotenv from "dotenv";
 import cors from "cors";
 import allRoutes from "./Routes/routes";
-import pg from "pg";
-import connectPgSimple from "connect-pg-simple";
+import MongoStore from "connect-mongo";
+
 
 dotenv.config();
 
@@ -40,34 +40,31 @@ app.use(
   })
 );
 
-// ⏺️ Connect-PG-Simple Setup
-const PgSession = connectPgSimple(session);
-const pgPool = new pg.Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+const mongoUrl = process.env.MONGODB_ATLAS_URL || "";
+
+const sessionStore = MongoStore.create({
+  mongoUrl,
+  collectionName: "sessions",
+  ttl: 60 * 60 * 24, // 1 day
 });
+
 
 // ⏺️ Session Middleware
 app.use(
   session({
-    store: new PgSession({
-      pool: pgPool,
-      tableName: "session",
-    }),
-    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    secret: process.env.SESSION_SECRET || "keyboard cat",
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: true,
       httpOnly: true,
       sameSite: "none",
-      domain: ".onrender.com", // ✅ ADD THIS LINE
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
+
 
 // Initialize Passport
 app.use(passport.initialize());

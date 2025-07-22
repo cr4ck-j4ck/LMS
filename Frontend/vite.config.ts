@@ -5,7 +5,11 @@ import path from "path";
 
 
 export default defineConfig({
-  plugins: [react(),
+  server: {
+    allowedHosts: ['64833e312dd4.ngrok-free.app'],
+  },
+  plugins: [
+    react(),
     tailwindcss()
   ],
   resolve: {

@@ -11,13 +11,6 @@ import { calculateLetterGrade } from "../Controllers/controllers";
 import { plagiarismChecker } from "../Controllers/controllers";
 import mammoth from "mammoth";
 
-router.use((req, res, next) => {
-  console.log('Session:', req.session);
-  console.log('Cookies:', req.headers.cookie);
-  next();
-});
-
-
 router.get(
   "/login",
   passport.authenticate("google", {
@@ -61,6 +54,7 @@ router.get("/disturbed", (req, res) => {
 router.post("/google-api", async (req, res) => {
   try {
     const accessToken = req.user?.accessToken;
+    console.log("accessToken dekh",accessToken);
     const { url } = req.body;
     console.log(accessToken);
     if (!accessToken) {
@@ -99,9 +93,6 @@ router.post("/canvas-login", async (req, res) => {
 });
 
 router.post("/moodle-api", async (req, res) => {
-  if (!req.session.moodleAccessToken) {
-    return res.send("Please Login into Moodle First..");
-  }
   try {
     const { url } = req.body;
     if (!url) {
@@ -123,9 +114,6 @@ router.post("/canvas-api", async (req, res) => {
     const accessToken = req.session?.canvasAccessToken;
     const { url } = req.body;
 
-    if (!accessToken) {
-      return res.status(401).send("Please Login,.. You are not loginned...");
-    }
 
     if (!url) {
       return res.status(400).send("URL is required in request body");
