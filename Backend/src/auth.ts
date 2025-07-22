@@ -20,9 +20,15 @@ passport.use(
       callbackURL: process.env.REDIRECT_URL,
       passReqToCallback:true
     },
-    async (req,accessToken, refreshToken, profile, done) => {
-      profile.accessToken = accessToken;
-      return done(null,profile)
+    async (req, accessToken, refreshToken, profile, done) => {
+      const user = {
+        id: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails?.[0].value,
+        accessToken,
+      };
+    
+      return done(null, user);
     }
   )
 );

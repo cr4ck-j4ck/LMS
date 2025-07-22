@@ -4,8 +4,10 @@ import passport from "passport";
 import "./auth";
 import dotenv from "dotenv";
 import cors from "cors";
-import FileStore from "session-file-store";
 import allRoutes from "./Routes/routes";
+import pg from 'pg';
+import connectPgSimple from 'connect-pg-simple';
+
 
 dotenv.config();
 
@@ -48,15 +50,33 @@ app.use(
   })
 );
 
-const FileStoreInstance = FileStore(session);
 
-// Setup session
+// ⏺️ Connect-PG-Simple Setup
+const PgSession = connectPgSimple(session);
+const pgPool = new pg.Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Railway
+  },
+});
+
+
+// ⏺️ Session Middleware
 app.use(
   session({
-    store: new FileStoreInstance({}),
-    secret: process.env.SECRET_KEY!,
+    store: new PgSession({
+      pool: pgPool, // 🧠 use Railway PostgreSQL pool
+      tableName: 'session', // optional (default is 'session')
+    }),
+    secret: process.env.SESSION_SECRET, // 🔐 keep this safe
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,         // ⚠️ Use `true` if your site is on HTTPS (Vercel, etc.)
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 
@@ -71,3 +91,5 @@ app.use(allRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
+

@@ -68,7 +68,7 @@ const Moodle: React.FC = () => {
   return (
     <div className="px-4 py-8 min-h-screen bg-gradient-to-br from-green-50 to-blue-100">
       <h1 className="text-4xl font-extrabold text-center text-green-700 mb-10 drop-shadow-lg animate-fade-in">Moodle Courses</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto py-10 Yhide">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto py-10 overflow-hidden p-5">
         {courses.map((course, idx) => (
           <div
             key={course.id}

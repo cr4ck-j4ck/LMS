@@ -38,6 +38,8 @@ router.get("/login-failure", (req, res) => {
   res.send("Login failed. Try again.");
 });
 
+
+
 router.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) console.log(err);
