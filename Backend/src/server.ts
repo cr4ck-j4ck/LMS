@@ -5,16 +5,13 @@ import "./auth";
 import dotenv from "dotenv";
 import cors from "cors";
 import allRoutes from "./Routes/routes";
-import pg from 'pg';
-import connectPgSimple from 'connect-pg-simple';
-
+import pg from "pg";
+import connectPgSimple from "connect-pg-simple";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-
 
 declare module "express-session" {
   interface SessionData {
@@ -36,14 +33,12 @@ declare global {
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
-
 
 // ⏺️ Connect-PG-Simple Setup
 const PgSession = connectPgSimple(session);
@@ -54,13 +49,12 @@ const pgPool = new pg.Pool({
   },
 });
 
-
 // ⏺️ Session Middleware
 app.use(
   session({
     store: new PgSession({
       pool: pgPool,
-      tableName: 'session',
+      tableName: "session",
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -68,7 +62,8 @@ app.use(
     cookie: {
       secure: true,
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: "none",
+      domain: ".onrender.com", // ✅ ADD THIS LINE
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -80,7 +75,6 @@ app.use(passport.session());
 
 // ------------------- ROUTES ------------------- //
 app.use(allRoutes);
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
