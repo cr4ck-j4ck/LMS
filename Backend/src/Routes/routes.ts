@@ -11,6 +11,13 @@ import { calculateLetterGrade } from "../Controllers/controllers";
 import { plagiarismChecker } from "../Controllers/controllers";
 import mammoth from "mammoth";
 
+router.use((req, res, next) => {
+  console.log('Session:', req.session);
+  console.log('Cookies:', req.headers.cookie);
+  next();
+});
+
+
 router.get(
   "/login",
   passport.authenticate("google", {
@@ -55,6 +62,7 @@ router.post("/google-api", async (req, res) => {
   try {
     const accessToken = req.user?.accessToken;
     const { url } = req.body;
+    console.log(accessToken);
     if (!accessToken) {
       return res.send("You are not Logged In..");
     }
