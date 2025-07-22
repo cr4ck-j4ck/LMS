@@ -39,13 +39,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: process.env.FRONTEND_URL, // e.g. https://your-app.vercel.app
     credentials: true,
   })
 );
