@@ -28,7 +28,7 @@ const Moodle: React.FC = () => {
           },
           { withCredentials: true, headers: { "Content-Type": "application/json" } }
         );
-        if (res.data === "Please Login into Moodle First..") {
+        if (res.data.includes("Logged")) {
           navigate("/moodleAboard");
         } else {
           setCourses(res.data || []);

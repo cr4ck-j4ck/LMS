@@ -32,11 +32,7 @@ const Canvas: React.FC = () => {
           { withCredentials: true, headers: { "Content-Type": "application/json" } }
         );
         // Check for 401 or login error in response
-        if (
-          res.status === 401 ||
-          (typeof res.data === 'string' && (res.data.includes('Please Login') || res.data.includes('not loginned'))) ||
-          (typeof res.data === 'object' && res.data.message && (res.data.message.includes('Please Login') || res.data.message.includes('not loginned')))
-        ) {
+        if (res.data.includes("Logged")) {
           navigate('/canvasAboard', { replace: true });
           return;
         }

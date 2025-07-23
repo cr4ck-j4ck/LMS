@@ -11,6 +11,12 @@ import { calculateLetterGrade } from "../Controllers/controllers";
 import { plagiarismChecker } from "../Controllers/controllers";
 import mammoth from "mammoth";
 
+router.use((req,res,next)=>{
+  console.log(req.sessionID);
+  console.log(req.session);
+  next()
+});
+
 router.get(
   "/login",
   passport.authenticate("google", {
@@ -84,7 +90,16 @@ router.post("/google-api", async (req, res) => {
 router.post("/moodle-login", async (req, res) => {
   req.session.moodleInstituteName = req.body.institute;
   req.session.moodleAccessToken = req.body.authToken;
-  res.send("ha Bhai cheetey");
+
+  req.session.save((err) => {
+    if (err) {
+      console.error("Session save error:", err);
+      return res.status(500).send("Session save failed");
+    }
+
+    console.log("✅ Saved:", req.session.moodleAccessToken, req.session.moodleInstituteName);
+    res.send("ha Bhai cheetey");
+  });
 });
 router.post("/canvas-login", async (req, res) => {
   req.session.canvasInstituteName = req.body.institute;
@@ -94,6 +109,9 @@ router.post("/canvas-login", async (req, res) => {
 
 router.post("/moodle-api", async (req, res) => {
   try {
+    if(!req.session.moodleAccessToken){
+      return res.send("You are not Logged In..");
+    }
     const { url } = req.body;
     if (!url) {
       return res.status(400).send("URL is required in request body");
@@ -111,7 +129,10 @@ router.post("/moodle-api", async (req, res) => {
 
 router.post("/canvas-api", async (req, res) => {
   try {
-    const accessToken = req.session?.canvasAccessToken;
+    const canvasAccessToken = req.session?.canvasAccessToken;
+    if(!req.session.canvasAccessToken){
+      return res.send("You are not Logged In..");
+    }
     const { url } = req.body;
 
 
