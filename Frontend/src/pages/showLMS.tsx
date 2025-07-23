@@ -1,14 +1,15 @@
-import { FaChalkboardTeacher, FaBookOpen, FaLayerGroup } from "react-icons/fa";
+import {  FaBookOpen, FaLayerGroup } from "react-icons/fa";
 
 const lmsList = [
-  {
-    name: "Classroom",
-    description: "Google Classroom for assignments, announcements, and more.",
-    icon: <FaChalkboardTeacher className="text-4xl text-blue-600" />,
-    bg: "from-blue-100 to-blue-300",
-    shadow: "shadow-blue-200",
-    link: "/showClassroom"
-  },
+  // {
+  // FaChalkboardTeacher,
+  //   name: "Classroom",
+  //   description: "Google Classroom for assignments, announcements, and more.",
+  //   icon: <FaChalkboardTeacher className="text-4xl text-blue-600" />,
+  //   bg: "from-blue-100 to-blue-300",
+  //   shadow: "shadow-blue-200",
+  //   link: "/showClassroom"
+  // },
   {
     name: "Moodle",
     description: "Moodle LMS for course content, quizzes, and resources.",

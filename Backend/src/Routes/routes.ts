@@ -109,9 +109,9 @@ router.post("/canvas-login", async (req, res) => {
 
 router.post("/moodle-api", async (req, res) => {
   try {
-    if(!req.session.moodleAccessToken){
-      return res.send("You are not Logged In..");
-    }
+    // if(!req.session.moodleAccessToken){
+    //   return res.send("You are not Logged In..");
+    // }
     const { url } = req.body;
     if (!url) {
       return res.status(400).send("URL is required in request body");
@@ -130,9 +130,9 @@ router.post("/moodle-api", async (req, res) => {
 router.post("/canvas-api", async (req, res) => {
   try {
     const canvasAccessToken = req.session?.canvasAccessToken;
-    if(!req.session.canvasAccessToken){
-      return res.send("You are not Logged In..");
-    }
+    // if(!req.session.canvasAccessToken){
+    //   return res.send("You are not Logged In..");
+    // }
     const { url } = req.body;
 
 
