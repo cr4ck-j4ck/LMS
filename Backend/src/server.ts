@@ -47,7 +47,7 @@ const sessionStore = MongoStore.create({
   collectionName: "sessions",
   ttl: 60 * 60 * 24, // 1 day
 });
-
+app.set('trust proxy', 1);
 
 // ⏺️ Session Middleware
 app.use(
